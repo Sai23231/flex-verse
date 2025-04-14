@@ -15,12 +15,15 @@ import { Layout } from './main/resources/Layout/Layout';
 import MyProfile from './main/resources/MyProfile/MyProfile';
 import SignIn from './main/resources/SignIn';
 import SignUp from './main/resources/SignUp';
+import User from './main/resources/User/User';
 import BecomeAMemberPage from './main/resources/BecomeAMemberPage/BecomeAMemberPage';
 import ConsultantProfile from './main/resources/MyProfile/ConsultantProfile';
 import BookAppointmentPage from './main/resources/BookAppointmentPage/BookAppointmentPage';
 import About from './main/resources/About';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import UserProfile from './main/resources/User/UserProfile';
+import GymFinder from './main/resources/User/GymFinder';
 
 const stripePromise = loadStripe(
   process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY as string
@@ -30,7 +33,8 @@ export const App = () => {
   return (
     <Elements stripe={stripePromise}>
       <Routes>
-        <Route path="/" element={<Layout component={<HomePage />} />}></Route>
+        {/* According to new Figma Website Design, Wrapping all components inside Layout Component is not necessary */}
+        {/* <Route path="/" element={<Layout component={<HomePage />} />}></Route>
         <Route path="/about" element={<Layout component={<About />} />}></Route>
         <Route
           path="/signin"
@@ -95,7 +99,13 @@ export const App = () => {
         <Route
           path="/failure"
           element={<Layout component={<PaymentFailure />} />}
-        ></Route>
+        ></Route> */}
+        <Route path="/" element={<HomePage />}></Route>
+        <Route path="/signin" element={<SignIn />}></Route>
+        <Route path="/signup" element={<SignUp />}></Route>
+        <Route path="/user" element={<User />}></Route>
+        <Route path="/userProfile" element={<UserProfile />}></Route>
+        <Route path="/gymFinder" element={<GymFinder />}></Route>
       </Routes>
     </Elements>
   );
