@@ -1,74 +1,86 @@
 import React from 'react';
-
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Button, Stack, IconButton } from '@mui/material';
+import { Facebook, Instagram, Twitter, Email } from '@mui/icons-material';
 
 export const HeroPane = () => {
   return (
     <Box
-      style={{
+      sx={{
+        height: '100vh',
         background: 'transparent',
-        paddingTop: '350px',
         display: 'flex',
-        justifyContent: 'right',
+        justifyContent: 'flex-end',
         alignItems: 'center',
-        height: '10vh',
-        marginBottom: '150px',
-        paddingRight: '100px',
+        pr: { xs: 3, sm: 10 },
+        pb: { xs: 6, sm: 10 }, // Add bottom padding to prevent overlap
+        textAlign: 'right',
       }}
     >
-      <div>
+      <Box>
         <Typography
-          variant="h1"
+          variant="h2"
           sx={{
-            fontFamily: 'helvetica',
+            fontFamily: 'Helvetica',
             fontWeight: 'bold',
-            fontSize: { xs: '30px', sm: '60px' },
-            color: 'White',
-            lineHeight: { xs: '75px', sm: '100.8px' },
-            wordSpacing: '10px',
+            fontSize: { xs: '40px', sm: '80px' },
+            color: 'white',
+            lineHeight: { xs: '60px', sm: '90px' },
+            mb: 2,
           }}
         >
-          <div style={{ lineHeight: '1' }}>
-            <span
-              style={{
-                color: 'rgb(0, 190, 110)',
-                marginRight: '20px',
-                fontSize: '100px',
-              }}
-            >
-              Become
-            </span>
-            the best
-            <br className="sm:block hidden" />{' '}
-            <span className="text-gradient">Version Of</span>
-            <span
-              style={{
-                color: 'rgb(0, 190, 110)',
-                marginLeft: '20px',
-                fontSize: '100px',
-              }}
-            >
-              Yourself
-            </span>
-          </div>
+          <span style={{ color: '#00BE6E' }}>Become</span> the best<br />
+          version of <span style={{ color: '#00BE6E' }}>Yourself</span>
         </Typography>
+
         <Typography
           variant="body1"
           sx={{
-            fontFamily: 'helvetica, Mohave',
-            fontWeight: 'thin',
             color: 'white',
-            fontSize: '20px',
-            lineHeight: '30.8px',
-            maxWidth: '670px',
+            fontSize: '18px',
+            lineHeight: '30px',
+            maxWidth: '600px',
+            mb: 4,
           }}
         >
-          The ultimate platform to reach your fitness goals. Get customized
-          workout plans, diets tailored to your preference, and expert
-          counselling here. Or, find a gym near you, take a virtual tour, and
-          join online.
+          The ultimate platform to reach your fitness goals. Get customized workout plans, diets tailored to your preference, and expert counselling here. Or, find a gym near you, take a virtual tour, and join online.
         </Typography>
-      </div>
+
+        <Stack direction="row" spacing={2} justifyContent="flex-end" mb={6}>
+          <Button variant="outlined" color="inherit">ABOUT US</Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#00BE6E',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#00a75f',
+              },
+            }}
+          >
+            JOIN NOW
+          </Button>
+        </Stack>
+
+        {/* SOCIAL Section */}
+        <Box mt={8}>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              color: 'white',
+              letterSpacing: 2,
+              mb: 1,
+            }}
+          >
+            SOCIAL
+          </Typography>
+          <Stack direction="row" spacing={2} justifyContent="flex-end">
+            <IconButton sx={{ color: 'white' }}><Facebook /></IconButton>
+            <IconButton sx={{ color: 'white' }}><Instagram /></IconButton>
+            <IconButton sx={{ color: 'white' }}><Twitter /></IconButton>
+            <IconButton sx={{ color: 'white' }}><Email /></IconButton>
+          </Stack>
+        </Box>
+      </Box>
     </Box>
   );
 };

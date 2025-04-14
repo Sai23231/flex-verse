@@ -11,7 +11,7 @@ import nutrition from './nutrition.png';
 import trainer from './trainer.jpg';
 import twitter from './twitter.svg';
 import about from './about.jpg';
-
+import mainhomepage from './mainhomepage.png';
 export {
   logo,
   menu,
@@ -26,4 +26,5 @@ export {
   nutrition,
   forSignUp,
   about,
+  mainhomepage,
 };
