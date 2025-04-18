@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, Fragment } from 'react';
 import {
   Box,
@@ -30,18 +29,18 @@ function debounce<T extends (...args: any[]) => any>(
 ) {
   let timeout: NodeJS.Timeout | null = null;
   let lastArgs: Parameters<T> | null = null;
-  
-  return function(...args: Parameters<T>) {
+
+  return function (...args: Parameters<T>) {
     if (options.leading && !timeout) {
       func.apply(null, args);
     } else {
       lastArgs = args;
     }
-    
+
     if (timeout) {
       clearTimeout(timeout);
     }
-    
+
     timeout = setTimeout(() => {
       if (options.trailing && lastArgs) {
         func.apply(null, lastArgs);
@@ -52,7 +51,7 @@ function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-/** Responsive NavBar component */
+/** Responsive NavBar component with smooth transitions */
 function NavBar() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -88,7 +87,7 @@ function NavBar() {
           </IconButton>
         </Box>
       ) : (
-        <Stack direction="row" spacing={4} sx={{ fontWeight: 600, mb: 4 }}>
+        <Stack direction="row" spacing={4} sx={{ fontWeight: 500, mb: 4 }}>
           {navItems.map((item, index) => (
             <Box
               key={index}
@@ -104,7 +103,7 @@ function NavBar() {
                   width: '100%',
                   height: '2px',
                   backgroundColor: '#FFC107',
-                  transform: 'scaleX(0)',
+                  transform: 'scaleX(0ѿ0',
                   transformOrigin: 'right',
                   transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                 },
@@ -125,9 +124,9 @@ function NavBar() {
         open={drawerOpen}
         onClose={handleDrawerToggle}
         sx={{
-          '& .MuiDrawer-paper': { 
-            width: '70%', 
-            backgroundColor: '#1e2539', 
+          '& .MuiDrawer-paper': {
+            width: '70%',
+            backgroundColor: '#1e2539',
             color: 'white',
             transition: 'transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
           },
@@ -142,17 +141,17 @@ function NavBar() {
           {navItems.map((item, index) => (
             <ListItem key={index} disablePadding onClick={handleDrawerToggle}>
               <ListItemButton>
-                <ListItemText 
-                  primary={item} 
-                  primaryTypographyProps={{ 
-                    sx: { 
+                <ListItemText
+                  primary={item}
+                  primaryTypographyProps={{
+                    sx: {
                       fontWeight: 'bold',
-                      transition: 'color 0.2s ease',
+                      transition: 'color 0.2s ease-in-out',
                       '&:hover': {
-                        color: '#FFC107'
-                      }
-                    } 
-                  }} 
+                        color: '#FFC107',
+                      },
+                    },
+                  }}
                 />
               </ListItemButton>
             </ListItem>
@@ -185,8 +184,7 @@ function useScrollProgress(ref: React.RefObject<HTMLElement>) {
         const scrolledIntoSection = Math.max(windowHeight - rect.top, 0);
         const rawProgress = scrolledIntoSection / (windowHeight + sectionHeight);
         const clampedProgress = Math.min(Math.max(rawProgress, 0), 1);
-        
-        // Only update if the change is significant enough
+
         if (Math.abs(clampedProgress - lastProgress.current) > 0.005) {
           setProgress(clampedProgress);
           lastProgress.current = clampedProgress;
@@ -214,23 +212,18 @@ function FlexVerseSection({ progress = 0 }: { progress?: number }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Smoother value mapping with easing functions
-  const blurValue = Math.min(50 * progress, 10); // Cap blur for performance
+  const blurValue = Math.min(50 * progress, 10);
   const minScale = isMobile ? 0.8 : 0.667;
   const scaleValue = Math.max(3 - 2.5 * progress, minScale);
   const overlayOpacity = 0.3 + 0.5 * progress;
-  const shouldStick = progress < 0.98;
-  const sectionHeight = progress > 0.95 ? '60vh' : '100vh';
-  const contentOpacity = 1 - Math.min(progress * 1.5, 1); // Smoother fade out
+  const contentOpacity = 1 - Math.min(progress * 1.5, 1);
   const showSubtitles = progress >= 0.4;
   const rotateValue = progress * 5;
 
   return (
     <Box
       sx={{
-        position: shouldStick ? 'sticky' : 'relative',
-        top: 0,
-        height: sectionHeight,
+        minHeight: '100vh',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -238,7 +231,8 @@ function FlexVerseSection({ progress = 0 }: { progress?: number }) {
         justifyContent: 'center',
         overflow: 'hidden',
         background: 'transparent',
-        transition: 'height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease-in-out',
+        scrollSnapAlign: 'start',
+        transition: 'opacity 0.5s ease-in-out',
         opacity: contentOpacity,
         '&::before': {
           content: '""',
@@ -254,7 +248,6 @@ function FlexVerseSection({ progress = 0 }: { progress?: number }) {
         },
       }}
     >
-      {/* Dark Overlay with smoother transition */}
       <motion.div
         style={{
           position: 'absolute',
@@ -265,7 +258,6 @@ function FlexVerseSection({ progress = 0 }: { progress?: number }) {
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       />
 
-      {/* FLEX‑VERSE Text with smoother scaling */}
       <motion.div
         style={{
           position: 'relative',
@@ -285,7 +277,7 @@ function FlexVerseSection({ progress = 0 }: { progress?: number }) {
           variant="h1"
           sx={{
             color: 'transparent',
-            fontWeight: 600,
+            fontWeight: 500,
             fontSize: {
               xs: 'clamp(80px, 4rem, 4rem)',
               sm: 'clamp(80px, 6rem, 6rem)',
@@ -311,7 +303,6 @@ function FlexVerseSection({ progress = 0 }: { progress?: number }) {
         </Typography>
       </motion.div>
 
-      {/* Descriptive Lines with Enhanced Animation */}
       <Box sx={{ position: 'relative', zIndex: 3, textAlign: 'center', overflow: 'hidden', mt: 4 }}>
         <motion.div
           initial={{ y: 100, opacity: 0 }}
@@ -378,8 +369,8 @@ function SequencedScrollReveal() {
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setStep(1), 800),  // Faster initial reveal
-      setTimeout(() => setStep(2), 1600), // Smoother sequence
+      setTimeout(() => setStep(1), 600),
+      setTimeout(() => setStep(2), 1200),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -390,14 +381,14 @@ function SequencedScrollReveal() {
         {step >= 1 && (
           <motion.div
             key="text"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
+            exit={{ opacity: 0, y: 20 }}
             transition={{
               type: 'spring',
-              stiffness: 100,
-              damping: 20,
-              duration: 0.6,
+              stiffness: 80,
+              damping: 18,
+              duration: 0.5,
             }}
           >
             <Typography
@@ -405,10 +396,10 @@ function SequencedScrollReveal() {
               sx={{
                 color: 'white',
                 mt: 2,
-                fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                fontSize: { xs: '1.1rem', sm: '1.3rem' },
                 fontWeight: 500,
                 textAlign: 'center',
-                textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                textShadow: '0 1px 3px rgba(0,0,0,0.2)',
               }}
             >
               Become the best version of yourself
@@ -418,14 +409,14 @@ function SequencedScrollReveal() {
         {step >= 2 && (
           <motion.div
             key="button"
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            exit={{ opacity: 0, scale: 0.9 }}
             transition={{
               type: 'spring',
-              stiffness: 100,
-              damping: 15,
-              duration: 0.5,
+              stiffness: 90,
+              damping: 16,
+              duration: 0.4,
             }}
           >
             <Button
@@ -435,14 +426,14 @@ function SequencedScrollReveal() {
                 color: 'white',
                 borderColor: 'white',
                 fontWeight: 'bold',
-                px: { xs: 3, sm: 4 },
-                py: 1.5,
+                px: { xs: 2.5, sm: 3.5 },
+                py: 1,
                 borderRadius: '999px',
-                fontSize: { xs: '1rem', sm: '1.2rem' },
-                transition: 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
+                fontSize: { xs: '0.9rem', sm: '1.1rem' },
+                transition: 'all 0.25s cubic-bezier(0.22, 1, 0.36, 1)',
                 '&:hover': {
                   backgroundColor: 'rgba(255,255,255,0.1)',
-                  transform: 'scale(1.05)',
+                  transform: 'scale(1.03)',
                 },
               }}
             >
@@ -455,29 +446,26 @@ function SequencedScrollReveal() {
   );
 }
 
-/** Enhanced Main HomePage Component with Smoother Animations */
+/** Enhanced Main HomePage Component with Full-Page Scroll and Fade Transitions */
 function HomePage() {
   const isAuthenticated = useIsAuthenticated();
   const [scrollY, setScrollY] = useState(0);
   const [locked, setLocked] = useState(true);
 
-  // Refs for tracking sections
   const heroRef = useRef(null);
   const flexVerseRef = useRef(null);
 
-  // Calculate scroll progress for FLEX‑VERSE section
   const flexVerseProgress = useScrollProgress(flexVerseRef);
 
-  // Optimized scroll tracking with requestAnimationFrame
   useEffect(() => {
     let lastScrollY = window.scrollY;
     let ticking = false;
-    
+
     const updateScrollY = () => {
       setScrollY(lastScrollY);
       ticking = false;
     };
-    
+
     const handleScroll = () => {
       lastScrollY = window.scrollY;
       if (!ticking) {
@@ -485,13 +473,13 @@ function HomePage() {
         ticking = true;
       }
     };
-    
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     const timer = setTimeout(() => {
       setLocked(false);
-    }, 1500); // Reduced lock time
-    
+    }, 1200);
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(timer);
@@ -499,25 +487,23 @@ function HomePage() {
   }, []);
 
   const maxScroll = 300;
-  const scale = 1 + (scrollY / maxScroll) * 0.3;
-  const parallaxOffset = -(scrollY * 0.2);
-  const opacity = scrollY < maxScroll ? 1 - scrollY / maxScroll : 0;
+  const scale = 1 + (scrollY / maxScroll) * 0.2;
+  const parallaxOffset = -(scrollY * 0.15);
 
   return (
     <>
-      {/* Smoother Screen Lock Overlay */}
       <AnimatePresence>
         {locked && (
           <motion.div
             key="lock-screen"
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
-            exit={{ 
+            exit={{
               opacity: 0,
-              transition: { 
-                duration: 0.8, 
-                ease: [0.22, 1, 0.36, 1] 
-              } 
+              transition: {
+                duration: 0.6,
+                ease: [0.22, 1, 0.36, 1],
+              },
             }}
             style={{
               position: 'fixed',
@@ -531,16 +517,16 @@ function HomePage() {
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              fontSize: '2rem',
+              fontSize: '1.8rem',
             }}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{
-                duration: 0.6,
+                duration: 0.5,
                 ease: [0.22, 1, 0.36, 1],
-                delay: 0.2
+                delay: 0.1,
               }}
             >
               Welcome to FLEX‑VERSE
@@ -549,7 +535,6 @@ function HomePage() {
         )}
       </AnimatePresence>
 
-      {/* Optimized Background Image with will-change */}
       <Box
         sx={{
           position: 'fixed',
@@ -560,9 +545,9 @@ function HomePage() {
           backgroundImage: `url(${mainhomepage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          transform: `scale(${Math.min(scale, 1.3)}) translateY(${parallaxOffset}px)`,
-          willChange: 'transform', // Hint to browser for optimization
-          transition: 'transform 0.1s cubic-bezier(0.22, 1, 0.36, 1)',
+          transform: `scale(${Math.min(scale, 1.1)}) translateY(${parallaxOffset}px)`,
+          willChange: 'transform',
+          transition: 'transform 0.15s cubic-bezier(0.22, 1, 0.36, 1)',
           zIndex: -1,
           '&:after': {
             content: '""',
@@ -571,254 +556,289 @@ function HomePage() {
             left: 0,
             width: '100%',
             height: '100%',
-            backdropFilter: 'blur(3px)',
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            backdropFilter: 'blur(2px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.15)',
           },
         }}
       />
 
-      {/* Hero Section with smoother entrance */}
-      <motion.div
-        ref={heroRef}
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: opacity, y: 0 }}
-        transition={{ 
-          duration: 1.2, 
-          ease: [0.22, 1, 0.36, 1] 
+      <Box
+        sx={{
+          scrollSnapType: 'y mandatory',
+          overflowY: 'auto',
+          height: '100vh',
+          overscrollBehavior: 'none',
+          WebkitOverflowScrolling: 'touch',
         }}
       >
-        <Box
-          sx={{
-            position: 'relative',
-            minHeight: '90vh',
-            color: 'white',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-            px: 2,
-            py: 3,
-          }}
+        <motion.div
+          ref={heroRef}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '0px 0px -200px 0px' }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <NavBar />
-          <Box sx={{ 
-            flex: 1, 
-            display: 'flex', 
-            flexDirection: 'column', 
-            justifyContent: 'center', 
-            maxWidth: 'md', 
-            mb: 2,
-            willChange: 'opacity, transform' // Performance hint
-          }}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
+          <Box
+            sx={{
+              minHeight: '100vh',
+              color: 'white',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              textAlign: 'center',
+              px: 2,
+              py: 3,
+              scrollSnapAlign: 'start',
+            }}
+          >
+            <NavBar />
+            <Box
+              sx={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                maxWidth: 'md',
+                mb: 2,
+                willChange: 'opacity, transform',
+              }}
             >
-              <Typography variant="h3" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '1.75rem', sm: '2.5rem' } }}>
-                REACH YOUR LIMITS
-              </Typography>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-            >
-              <Typography variant="h3" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '1.75rem', sm: '2.5rem' } }}>
-                AND GET TO THE NEXT LEVEL
-              </Typography>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-            >
-              <Typography variant="body1" sx={{ mt: 1, mb: 3 }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </Typography>
-            </motion.div>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 2 }}>
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.7 }}
               >
-                <Button 
-                  variant="outlined" 
-                  color="inherit" 
-                  sx={{ 
-                    borderColor: 'white', 
-                    color: 'white',
-                    transition: 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
-                    '&:hover': {
-                      transform: 'translateY(-2px)'
-                    }
-                  }}
+                <Typography
+                  variant="h3"
+                  fontWeight="bold"
+                  gutterBottom
+                  sx={{ fontSize: { xs: '1.6rem', sm: '2.2rem' } }}
                 >
-                  ABOUT US
-                </Button>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-              >
-                <Button
-                  variant="contained"
-                  sx={{
-                    backgroundColor: '#FFA76D',
-                    color: 'black',
-                    transition: 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
-                    '&:hover': { 
-                      backgroundColor: '#ff8c42',
-                      transform: 'translateY(-2px)'
-                    },
-                  }}
-                >
-                  JOIN NOW
-                </Button>
-              </motion.div>
-            </Stack>
-            <SequencedScrollReveal />
-          </Box>
-          <Box sx={{ textAlign: 'center' }}>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-            >
-              <Typography variant="subtitle1" gutterBottom sx={{ mb: 1 }}>
-                SOCIAL
-              </Typography>
-            </motion.div>
-            <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 2 }}>
-              {[Facebook, Instagram, Twitter, Email].map((Icon, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ 
-                    delay: 0.9 + index * 0.1,
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 10
-                  }}
-                >
-                  <IconButton 
-                    color="inherit" 
-                    size="small"
-                    sx={{
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        transform: 'scale(1.2)',
-                        color: '#FFC107'
-                      }
-                    }}
-                  >
-                    <Icon />
-                  </IconButton>
-                </motion.div>
-              ))}
-            </Stack>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.3 }}
-              >
-                <Typography variant="body2" sx={{ textTransform: 'uppercase', letterSpacing: 1 }}>
-                  SCROLL DOWN
+                  REACH YOUR LIMITS
                 </Typography>
               </motion.div>
               <motion.div
-                initial={{ y: 0 }}
-                animate={{ y: [0, 10, 0] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: 1.4
-                }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.7 }}
               >
-                <KeyboardArrowDown
-                  sx={{
-                    color: 'white',
-                    fontSize: '2rem',
-                  }}
-                />
+                <Typography
+                  variant="h3"
+                  fontWeight="bold"
+                  gutterBottom
+                  sx={{ fontSize: { xs: '1.6rem', sm: '2.2rem' } }}
+                >
+                  AND GET TO THE NEXT LEVEL
+                </Typography>
               </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.7 }}
+              >
+                <Typography variant="body1" sx={{ mt: 1, mb: 3, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
+                  Unlock your full potential with personalized fitness and nutrition guidance.
+                </Typography>
+              </motion.div>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 2 }}>
+                <motion.div
+                  initial={{ opacity: 0, x: -15 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                >
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    sx={{
+                      borderColor: 'white',
+                      color: 'white',
+                      transition: 'all 0.25s cubic-bezier(0.22, 1, 0.36, 1)',
+                      '&:hover': {
+                        transform: 'translateY(-1px)',
+                      },
+                    }}
+                  >
+                    ABOUT US
+                  </Button>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 15 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                >
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: '#FFA76D',
+                      color: 'black',
+                      transition: 'all 0.25s cubic-bezier(0.22, 1, 0.36, 1)',
+                      '&:hover': {
+                        backgroundColor: '#ff8c42',
+                        transform: 'translateY(-1px)',
+                      },
+                    }}
+                  >
+                    JOIN NOW
+                  </Button>
+                </motion.div>
+              </Stack>
+              <SequencedScrollReveal />
+            </Box>
+            <Box sx={{ textAlign: 'center' }}>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+              >
+                <Typography variant="subtitle1" gutterBottom sx={{ mb: 1, fontSize: '0.9rem' }}>
+                  SOCIAL
+                </Typography>
+              </motion.div>
+              <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 2 }}>
+                {[Facebook, Instagram, Twitter, Email].map((Icon, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: 0.8 + index * 0.08,
+                      type: 'spring',
+                      stiffness: 200,
+                      damping: 8,
+                    }}
+                  >
+                    <IconButton
+                      color="inherit"
+                      size="small"
+                      sx={{
+                        transition: 'all 0.25s ease-in-out',
+                        '&:hover': {
+                          transform: 'scale(1.1)',
+                          color: '#FFC107',
+                        },
+                      }}
+                    >
+                      <Icon />
+                    </IconButton>
+                  </motion.div>
+                ))}
+              </Stack>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.1 }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{ textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.7rem' }}
+                  >
+                    SCROLL DOWN
+                  </Typography>
+                </motion.div>
+                <motion.div
+                  initial={{ y: 0 }}
+                  animate={{ y: [0, 8, 0] }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: 1.2,
+                  }}
+                >
+                  <KeyboardArrowDown
+                    sx={{
+                      color: 'white',
+                      fontSize: '1.5rem',
+                    }}
+                  />
+                </motion.div>
+              </Box>
             </Box>
           </Box>
-        </Box>
-      </motion.div>
+        </motion.div>
 
-      {/* FLEX‑VERSE Section */}
-      <Box ref={flexVerseRef} sx={{ height: '250vh', position: 'relative' }}>
-        <FlexVerseSection progress={flexVerseProgress} />
+        <motion.div
+          ref={flexVerseRef}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '0px 0px -200px 0px' }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <FlexVerseSection progress={flexVerseProgress} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '0px 0px -200px 0px' }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Box
+            sx={{
+              minHeight: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              scrollSnapAlign: 'start',
+              py: '1rem',
+            }}
+          >
+            <FindOptions />
+          </Box>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '0px 0px -200px 0px' }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Box
+            sx={{
+              minHeight: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              scrollSnapAlign: 'start',
+              py: 3,
+            }}
+          >
+            <ListingCarousel title="Top Trainers Near You" type="Trainers" />
+          </Box>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '0px 0px -200px 0px' }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Box
+            sx={{
+              minHeight: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              scrollSnapAlign: 'start',
+              py: 3,
+            }}
+          >
+            <ListingCarousel title="Top Dieticians Near You" type="Dietitians" />
+          </Box>
+        </motion.div>
       </Box>
 
-      {/* Other Sections with smoother entrance */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-        transition={{ 
-          duration: 0.8, 
-          type: 'spring', 
-          stiffness: 100, 
-          damping: 20 
-        }}
-      >
-        <Box sx={{ py: '1rem' }}>
-          <FindOptions />
-        </Box>
-      </motion.div>
-      
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-        transition={{ 
-          delay: 0.1,
-          duration: 0.8, 
-          type: 'spring', 
-          stiffness: 100, 
-          damping: 20 
-        }}
-      >
-        <Box sx={{ py: 3 }}>
-          <ListingCarousel title="Top Trainers Near You" type="Trainers" />
-        </Box>
-      </motion.div>
-      
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px -100px 0px" }}
-        transition={{ 
-          delay: 0.2,
-          duration: 0.8, 
-          type: 'spring', 
-          stiffness: 100, 
-          damping: 20 
-        }}
-      >
-        <Box sx={{ py: 3 }}>
-          <ListingCarousel title="Top Dieticians Near You" type="Dietitians" />
-        </Box>
-      </motion.div>
-
-      {/* Enhanced bounce animation */}
       <Box
         sx={{
-          '@keyframes bounce': {
+          '@keyframes smoothBounce': {
             '0%, 100%': {
               transform: 'translateY(0)',
               animationTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
             },
             '50%': {
-              transform: 'translateY(10px)',
+              transform: 'translateY(-5px)',
               animationTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
             },
           },
