@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import FeaturedContentSlider from './FeaturedContentSlider';
+ import FeaturedContentSlider from './FeaturedContentSlider';
 import heroImage from '../../../assets/heroimage.png';
 import profileImage from '../../../assets/profile.png';
 import logo from '../../../assets/logo.png';
@@ -18,7 +18,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import EmailIcon from '@mui/icons-material/Email';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PeopleIcon from '@mui/icons-material/People';
-
 const OrangeButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#FF7E35',
   color: '#fff',
@@ -272,9 +271,10 @@ function Featured() {
           </Box>
         </Box>
       </Box>
-
-      {/* Featured Slider */}
+        
+      {/* Featured Content Slider */}
       <FeaturedContentSlider />
+    
     </Box>
   );
 }
