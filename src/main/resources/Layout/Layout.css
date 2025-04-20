@@ -2,24 +2,23 @@
 
 /* Default styles for larger screens */
 .layout-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.content {
+  flex-grow: 1;
+}
+
+/* Media query for tablets and smaller screens */
+@media (max-width: 1024px) {
   .content {
-    flex-grow: 1;
   }
-  
-  /* Media query for tablets and smaller screens */
-  @media (max-width: 1024px) {
-    .content {
-    }
+}
+
+/* Media query for mobile phones */
+@media (max-width: 768px) {
+  .content {
   }
-  
-  /* Media query for mobile phones */
-  @media (max-width: 768px) {
-    .content {
-    }
-  }
-  
+}

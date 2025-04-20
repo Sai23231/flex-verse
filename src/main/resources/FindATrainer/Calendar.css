@@ -1,6 +1,5 @@
 .disabled-date {
-    background-color: #f3f4f6; /* light gray background */
-    pointer-events: none; /* make it non-clickable */
-    opacity: 0.6; /* slightly faded */
-  }
-  
+  background-color: #f3f4f6; /* light gray background */
+  pointer-events: none; /* make it non-clickable */
+  opacity: 0.6; /* slightly faded */
+}

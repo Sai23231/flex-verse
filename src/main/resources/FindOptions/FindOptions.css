@@ -1,25 +1,26 @@
 .option-container {
-    position: relative;
-  }
-  
-  .description {
-    position: absolute;
-    bottom: -160px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: transparent;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    width: 220px;
-    text-align: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
-  }
-  
-  .option-container:hover .description {
-    opacity: 1;
-    visibility: visible;
-  }
-  
+  position: relative;
+}
+
+.description {
+  position: absolute;
+  bottom: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: transparent;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  width: 220px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s;
+}
+
+.option-container:hover .description {
+  opacity: 1;
+  visibility: visible;
+}
