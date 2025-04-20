@@ -1,7 +1,8 @@
-import React from 'react';
-import { Box, useMediaQuery, useTheme, Paper, Typography, IconButton } from '@mui/material';
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import React, { useState } from 'react';
+import { Box, useMediaQuery, useTheme, Paper, Typography, IconButton, Tabs, Tab, AppBar } from '@mui/material';
+import { ArrowBack as ArrowBackIcon, Home as HomeIcon, Person as PersonIcon } from '@mui/icons-material';
 import Sidebar from './Sidebar';
+import MobileTopSidebar from './MobileTopSidebar';
 import Calendar from './Calendar';
 import ProfileContent from './ProfileContent';
 
@@ -9,10 +10,15 @@ const UserProfileLayout = () => {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [activeTab, setActiveTab] = useState(0);
 
   const handleBackToHome = () => {
     // Navigation logic would go here
     console.log('Navigate back to homepage');
+  };
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
   };
 
   return (
@@ -23,7 +29,8 @@ const UserProfileLayout = () => {
       bgcolor: '#1A0B2E',
       backgroundImage: 'linear-gradient(to right, #1A0B2E, #321450)',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      flexDirection: { xs: 'column', md: 'row' }
     }}>
       {/* Background gradient shapes */}
       <Box sx={{
@@ -48,19 +55,95 @@ const UserProfileLayout = () => {
         zIndex: 0
       }} />
       
-      {/* Sidebar */}
-      <Box sx={{ 
-        width: '64px', 
-        display: { xs: 'none', md: 'block' },
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        height: '100%',
-        bgcolor: '#FF6B35',
-        zIndex: 10
-      }}>
-        <Sidebar />
-      </Box>
+      {/* Sidebar - desktop version */}
+      {!isMobile && (
+        <Box sx={{ 
+          width: '64px', 
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          height: '100%',
+          bgcolor: '#FF6B35',
+          zIndex: 10
+        }}>
+          <Sidebar />
+        </Box>
+      )}
+      
+      {/* Mobile Top Sidebar */}
+      {isMobile && <MobileTopSidebar />}
+      
+      {/* Mobile Navigation Bar with Back Button */}
+      {isMobile && (
+        <AppBar 
+          position="static" 
+          sx={{ 
+            bgcolor: '#1A0B2E', 
+            boxShadow: 'none',
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
+            zIndex: 5
+          }}
+        >
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            py: 1.5, 
+            px: 2 
+          }}>
+            <IconButton 
+              sx={{ color: 'white', p: 0, mr: 1 }}
+              onClick={handleBackToHome}
+            >
+              <ArrowBackIcon fontSize="small" />
+            </IconButton>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                color: 'white', 
+                fontWeight: 600,
+                flexGrow: 1
+              }}
+            >
+              User Profile
+            </Typography>
+          </Box>
+        </AppBar>
+      )}
+      
+      {/* Mobile Tabs */}
+      {isMobile && (
+        <Box sx={{ 
+          width: '100%', 
+          bgcolor: 'rgba(58, 36, 90, 0.6)', 
+          zIndex: 5,
+          borderBottom: '2px solid rgba(255, 107, 53, 0.3)'
+        }}>
+          <Tabs 
+            value={activeTab} 
+            onChange={handleTabChange}
+            variant="fullWidth"
+            sx={{
+              '& .MuiTabs-indicator': {
+                backgroundColor: '#FF6B35',
+                height: '3px'
+              },
+              '& .MuiTab-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                fontSize: '0.85rem',
+                py: 1.5,
+                '&.Mui-selected': {
+                  color: '#FF6B35',
+                },
+              },
+            }}
+          >
+            <Tab label="Calendar & Timer" />
+            <Tab label="Profile & History" />
+          </Tabs>
+        </Box>
+      )}
       
       {/* Main Content */}
       <Box sx={{ 
@@ -70,42 +153,46 @@ const UserProfileLayout = () => {
         display: 'flex',
         position: 'relative',
         zIndex: 1,
-        height: '100%'
+        height: isMobile ? 'calc(100vh - 113px - 56px - 60px)' : '100%', // Adjusted for top sidebar, tabs and bottom nav
+        flexDirection: { xs: 'column', md: 'row' },
+        overflow: { xs: 'auto', md: 'hidden' }
       }}>
-        {/* Left Panel with Calendar */}
+        {/* Left Panel with Calendar - Only visible if activeTab is 0 on mobile */}
         <Box sx={{ 
           width: { xs: '100%', md: '360px' },
-          display: 'flex',
+          display: { xs: isMobile && activeTab !== 0 ? 'none' : 'flex', md: 'flex' },
           flexDirection: 'column',
           p: { xs: 2, sm: 3, md: 4 },
           height: '100%',
           overflowY: 'auto'
         }}>
-          {/* Back to Homepage */}
-          <Box 
-            sx={{ 
-              display: 'flex',
-              alignItems: 'center',
-              mb: 1,
-              cursor: 'pointer'
-            }}
-            onClick={handleBackToHome}
-          >
-            <IconButton sx={{ color: 'white', p: 0, mr: 1 }}>
-              <ArrowBackIcon fontSize="small" />
-            </IconButton>
-            <Typography 
-              variant="caption" 
+          {/* Back to Homepage - Not shown on mobile as it's in the AppBar */}
+          {!isMobile && (
+            <Box 
               sx={{ 
-                color: 'white', 
-                textTransform: 'uppercase',
-                fontWeight: 600,
-                letterSpacing: 0.5
+                display: 'flex',
+                alignItems: 'center',
+                mb: 1,
+                cursor: 'pointer'
               }}
+              onClick={handleBackToHome}
             >
-              Back to homepage
-            </Typography>
-          </Box>
+              <IconButton sx={{ color: 'white', p: 0, mr: 1 }}>
+                <ArrowBackIcon fontSize="small" />
+              </IconButton>
+              <Typography 
+                variant="caption" 
+                sx={{ 
+                  color: 'white', 
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  letterSpacing: 0.5
+                }}
+              >
+                Back to homepage
+              </Typography>
+            </Box>
+          )}
           
           {/* Upcoming Meeting Heading */}
           <Typography 
@@ -113,7 +200,8 @@ const UserProfileLayout = () => {
             sx={{ 
               color: 'white', 
               mb: 0.5,
-              fontWeight: 600
+              fontWeight: 600,
+              fontSize: { xs: '1.25rem', md: '1.5rem' }
             }}
           >
             Upcoming meeting
@@ -134,7 +222,7 @@ const UserProfileLayout = () => {
           <Calendar />
         </Box>
         
-        {/* Right Panel with Profile, Bills and History */}
+        {/* Right Panel with Profile, Bills and History - Only visible if activeTab is 1 on mobile */}
         <Box sx={{ 
           flex: 1,
           p: { xs: 2, sm: 3, md: 4 },
@@ -142,7 +230,7 @@ const UserProfileLayout = () => {
           height: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',
-          display: 'flex'
+          display: { xs: isMobile && activeTab !== 1 ? 'none' : 'flex', md: 'flex' }
         }}>
           {/* Glass Panel for Profile, Bills and History */}
           <Paper 
@@ -184,6 +272,32 @@ const UserProfileLayout = () => {
           </Paper>
         </Box>
       </Box>
+      
+      {/* Bottom Navigation Bar for Mobile */}
+      {isMobile && (
+        <Box 
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '56px',
+            bgcolor: '#FF6B35',
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            zIndex: 10,
+            boxShadow: '0 -2px 10px rgba(0,0,0,0.2)'
+          }}
+        >
+          <IconButton sx={{ color: 'white' }}>
+            <HomeIcon />
+          </IconButton>
+          <IconButton sx={{ color: 'white' }}>
+            <PersonIcon />
+          </IconButton>
+        </Box>
+      )}
     </Box>
   );
 };

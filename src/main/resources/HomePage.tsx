@@ -12,12 +12,15 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Container,
+  Avatar,
 } from '@mui/material';
 import { Facebook, Instagram, Twitter, Email, Menu, Close, KeyboardArrowDown } from '@mui/icons-material';
 import { useIsAuthenticated } from 'react-auth-kit';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { main_homepage } from '../assets';
+import logo from '../assets/logo.png';
 import { ListingCarousel } from './Commons/ListingCarousel';
 import FindOptions from './FindOptions/FindOptions';
 
@@ -41,23 +44,46 @@ function NavBar() {
             top: 0,
             left: 0,
             right: 0,
-            p: 1,
+            p: 1.5,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             zIndex: 1100,
-            backgroundColor: 'transparent',
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            backdropFilter: 'blur(5px)',
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#FFC107' }}>
-            FLEX‑VERSE
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              component="img"
+              src={logo}
+              alt="FLEX-VERSE Logo"
+              sx={{ 
+                width: 32,
+                height: 32,
+                objectFit: 'contain'
+              }}
+            />
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#FFC107', fontSize: '1rem' }}>
+              FLEX‑VERSE
+            </Typography>
+          </Box>
           <IconButton onClick={handleDrawerToggle} sx={{ color: 'white' }}>
             <Menu />
           </IconButton>
         </Box>
       ) : (
-        <Stack direction="row" spacing={4} sx={{ fontWeight: 600, mb: 4 }}>
+        <Stack 
+          direction="row" 
+          spacing={4} 
+          sx={{ 
+            fontWeight: 600, 
+            mb: 4,
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center'
+          }}
+        >
           {navItems.map((item, index) => (
             <Box
               key={index}
@@ -95,13 +121,28 @@ function NavBar() {
         open={drawerOpen}
         onClose={handleDrawerToggle}
         sx={{
-          '& .MuiDrawer-paper': { width: '70%', backgroundColor: '#1e2539', color: 'white' },
+          '& .MuiDrawer-paper': { width: '80%', maxWidth: '300px', backgroundColor: '#1e2539', color: 'white' },
         }}
       >
         <Box sx={{ textAlign: 'right', p: 1 }}>
           <IconButton onClick={handleDrawerToggle} sx={{ color: 'white' }}>
             <Close />
           </IconButton>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+          <Box
+            component="img"
+            src={logo}
+            alt="FLEX-VERSE Logo"
+            sx={{ 
+              width: 32,
+              height: 32,
+              objectFit: 'contain'
+            }}
+          />
+          <Typography sx={{ fontWeight: 'bold', color: '#FFC107', fontSize: '1rem' }}>
+            FLEX‑VERSE
+          </Typography>
         </Box>
         <List>
           {navItems.map((item, index) => (
@@ -144,12 +185,15 @@ function useScrollProgress(ref: React.RefObject<HTMLElement>) {
 
 /** FLEX‑VERSE Section with scroll-based animation */
 function FlexVerseSection({ progress = 0 }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
   // Mapping progress values smoothly
   const blurValue = 50 * progress;
   
   // Calculate scale based on scroll progress (3x to minimum scale)
-  const minScale = 0.667; // This ensures minimum size of 80px (80/120 = 0.667)
-  const scaleValue = Math.max(3 - (2 * progress), minScale);
+  const minScale = isMobile ? 0.4 : 0.667; // Even smaller minimum scale on mobile
+  const scaleValue = Math.max(isMobile ? (2.2 - (1.5 * progress)) : (3 - (2 * progress)), minScale);
   
   // Enhanced overlay opacity for darker tint
   const overlayOpacity = 0.2 + (0.6 * progress);
@@ -211,6 +255,9 @@ function FlexVerseSection({ progress = 0 }) {
           position: 'relative',
           zIndex: 3,
           scale: scaleValue,
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
         }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
       >
@@ -220,16 +267,21 @@ function FlexVerseSection({ progress = 0 }) {
             color: 'transparent',
             fontWeight: 600,
             fontSize: { 
-              xs: 'clamp(80px, 4rem, 4rem)', 
-              sm: 'clamp(80px, 6rem, 6rem)', 
+              xs: 'clamp(30px, 12vw, 60px)', 
+              sm: 'clamp(60px, 18vw, 100px)', 
               md: 'clamp(80px, 8rem, 8rem)' 
             },
             textTransform: 'uppercase',
-            letterSpacing: '0.2rem',
+            letterSpacing: { xs: '0.05rem', sm: '0.1rem', md: '0.2rem' },
             userSelect: 'none',
-            WebkitTextStroke: '2px white',
+            WebkitTextStroke: { xs: '1px white', sm: '2px white' },
             background: 'transparent',
             mixBlendMode: 'normal',
+            textAlign: 'center',
+            px: 2,
+            mx: 'auto',
+            width: 'fit-content',
+            maxWidth: '100%',
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -245,7 +297,7 @@ function FlexVerseSection({ progress = 0 }) {
       </motion.div>
       
       {/* Descriptive Lines with Enhanced Animation */}
-      <Box sx={{ position: 'relative', zIndex: 3, textAlign: 'center', overflow: 'hidden', mt: 4 }}>
+      <Box sx={{ position: 'relative', zIndex: 3, textAlign: 'center', overflow: 'hidden', mt: { xs: 2, sm: 4 }, px: 2, width: '100%' }}>
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ 
@@ -262,9 +314,9 @@ function FlexVerseSection({ progress = 0 }) {
             variant="h5" 
             sx={{ 
               color: 'white',
-              mb: 2,
+              mb: { xs: 1, sm: 2 },
               fontWeight: 300,
-              fontSize: { xs: '1.25rem', sm: '1.5rem' },
+              fontSize: { xs: '0.875rem', sm: '1.25rem', md: '1.5rem' },
               textShadow: '0 2px 4px rgba(0,0,0,0.2)',
             }}
           >
@@ -289,7 +341,7 @@ function FlexVerseSection({ progress = 0 }) {
             sx={{ 
               color: 'white',
               fontWeight: 600,
-              fontSize: { xs: '2rem', sm: '2.5rem' },
+              fontSize: { xs: '1.25rem', sm: '2rem', md: '2.5rem' },
               textShadow: '0 2px 4px rgba(0,0,0,0.2)',
             }}
           >
@@ -303,6 +355,8 @@ function FlexVerseSection({ progress = 0 }) {
 
 /** Main HomePage Component */
 function HomePage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isAuthenticated = useIsAuthenticated();
   const [scrollY, setScrollY] = useState(0);
   const [locked, setLocked] = useState(true);
@@ -329,6 +383,9 @@ function HomePage() {
   const scale = scrollY < maxScroll ? 1 + (scrollY / maxScroll) * 0.2 : 1.2;
   const opacity = scrollY < maxScroll ? 1 - (scrollY / maxScroll) : 0;
 
+  // Update for FLEX-VERSE section height to be smaller on mobile
+  const flexVerseSectionHeight = isMobile ? '200vh' : '250vh';
+
   return (
     <>
       {/* Screen Lock Overlay */}
@@ -351,7 +408,9 @@ function HomePage() {
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              fontSize: '2rem',
+              fontSize: isMobile ? '1.5rem' : '2rem',
+              textAlign: 'center',
+              padding: '0 1rem',
             }}
           >
             Welcome to FLEX‑VERSE
@@ -396,33 +455,83 @@ function HomePage() {
         <Box
           sx={{
             position: 'relative',
-            minHeight: '90vh',
+            minHeight: '100vh',
             color: 'white',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             textAlign: 'center',
-            px: 2,
-            py: 3,
+            px: { xs: 2, sm: 3 },
+            py: { xs: 4, sm: 3 },
+            pt: isMobile ? '60px' : 3, // Add extra padding top for mobile to account for fixed navbar
           }}
         >
           {/* NavBar (Responsive) */}
           <NavBar />
 
           {/* Hero Content */}
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 'md', mb: 2 }}>
-            <Typography variant="h3" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '1.75rem', sm: '2.5rem' } }}>
+          <Box sx={{ 
+            flex: 1, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            justifyContent: 'center', 
+            maxWidth: 'md', 
+            mb: { xs: 3, sm: 2 },
+            mt: isMobile ? 2 : 0,
+          }}>
+            <Typography 
+              variant="h3" 
+              fontWeight="bold" 
+              gutterBottom 
+              sx={{ 
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2.5rem' },
+                lineHeight: { xs: 1.2, sm: 1.3 },
+                mb: { xs: 1, sm: 2 }
+              }}
+            >
               REACH YOUR LIMITS
             </Typography>
-            <Typography variant="h3" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '1.75rem', sm: '2.5rem' } }}>
+            <Typography 
+              variant="h3" 
+              fontWeight="bold" 
+              gutterBottom 
+              sx={{ 
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2.5rem' },
+                lineHeight: { xs: 1.2, sm: 1.3 },
+                mb: { xs: 1, sm: 2 }
+              }}
+            >
               AND GET TO THE NEXT LEVEL
             </Typography>
-            <Typography variant="body1" sx={{ mt: 1, mb: 3 }}>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                mt: { xs: 1, sm: 2 }, 
+                mb: { xs: 2, sm: 3 },
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                px: { xs: 1, sm: 0 }
+              }}
+            >
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </Typography>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center" sx={{ mb: 2 }}>
-              <Button variant="outlined" color="inherit" sx={{ borderColor: 'white', color: 'white' }}>
+            <Stack 
+              direction={{ xs: 'column', sm: 'row' }} 
+              spacing={{ xs: 1.5, sm: 2 }} 
+              justifyContent="center" 
+              sx={{ mb: { xs: 3, sm: 2 } }}
+            >
+              <Button 
+                variant="outlined" 
+                color="inherit" 
+                sx={{ 
+                  borderColor: 'white', 
+                  color: 'white',
+                  py: { xs: 1, sm: 1.5 },
+                  px: { xs: 3, sm: 4 },
+                  fontSize: { xs: '0.875rem', sm: '1rem' }
+                }}
+              >
                 ABOUT US
               </Button>
               <Button
@@ -430,6 +539,9 @@ function HomePage() {
                 sx={{
                   backgroundColor: '#FFA76D',
                   color: 'black',
+                  py: { xs: 1, sm: 1.5 },
+                  px: { xs: 3, sm: 4 },
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
                   '&:hover': { backgroundColor: '#ff8c42' },
                 }}
               >
@@ -439,56 +551,103 @@ function HomePage() {
           </Box>
 
           {/* Social Icons & Scroll Down */}
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="subtitle1" gutterBottom sx={{ mb: 1 }}>
+          <Box sx={{ textAlign: 'center', mt: { xs: 'auto', sm: 0 } }}>
+            <Typography 
+              variant="subtitle1" 
+              gutterBottom 
+              sx={{ 
+                mb: { xs: 0.5, sm: 1 },
+                fontSize: { xs: '0.75rem', sm: '1rem' },
+                letterSpacing: { xs: 1, sm: 2 }
+              }}
+            >
               SOCIAL
             </Typography>
-            <Stack direction="row" spacing={2} justifyContent="center" sx={{ mb: 2 }}>
-              <IconButton color="inherit" size="small">
-                <Facebook />
+            <Stack 
+              direction="row" 
+              spacing={{ xs: 1.5, sm: 2 }} 
+              justifyContent="center" 
+              sx={{ mb: { xs: 1.5, sm: 2 } }}
+            >
+              <IconButton color="inherit" size={isMobile ? "small" : "medium"}>
+                <Facebook fontSize={isMobile ? "small" : "medium"} />
               </IconButton>
-              <IconButton color="inherit" size="small">
-                <Instagram />
+              <IconButton color="inherit" size={isMobile ? "small" : "medium"}>
+                <Instagram fontSize={isMobile ? "small" : "medium"} />
               </IconButton>
-              <IconButton color="inherit" size="small">
-                <Twitter />
+              <IconButton color="inherit" size={isMobile ? "small" : "medium"}>
+                <Twitter fontSize={isMobile ? "small" : "medium"} />
               </IconButton>
-              <IconButton color="inherit" size="small">
-                <Email />
+              <IconButton color="inherit" size={isMobile ? "small" : "medium"}>
+                <Email fontSize={isMobile ? "small" : "medium"} />
               </IconButton>
             </Stack>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-              <Typography variant="body2" sx={{ textTransform: 'uppercase', letterSpacing: 1 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              gap: { xs: 0.5, sm: 1 } 
+            }}>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  textTransform: 'uppercase', 
+                  letterSpacing: 1,
+                  fontSize: { xs: '0.7rem', sm: '0.875rem' }
+                }}
+              >
                 SCROLL DOWN
               </Typography>
               <KeyboardArrowDown sx={{ 
                 color: 'white',
-                fontSize: '2rem',
+                fontSize: { xs: '1.5rem', sm: '2rem' },
                 animation: 'bounce 2s infinite'
               }} />
-              {/* <Box sx={{ width: '30px', height: '2px', backgroundColor: 'white', transform: 'rotate(45deg)' }} /> */}
             </Box>
           </Box>
         </Box>
       </motion.div>
 
       {/* FLEX‑VERSE Section */}
-      <Box ref={flexVerseRef} sx={{ height: '250vh', position: 'relative' }}>
+      <Box ref={flexVerseRef} sx={{ height: flexVerseSectionHeight, position: 'relative' }}>
         <FlexVerseSection progress={flexVerseProgress} />
       </Box>
 
       {/* Other Sections */}
-      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: 'easeInOut' }}>
-        <Box sx={{ py: '1rem' }}>
-          <FindOptions />
-        </Box>
-      </motion.div>
-      <Box sx={{ py: 3 }}>
-        <ListingCarousel title="Top Trainers Near You" type="Trainers" />
-      </Box>
-      <Box sx={{ py: 3 }}>
-        <ListingCarousel title="Top Dieticians Near You" type="Dietitians" />
-      </Box>
+      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.8, ease: 'easeInOut' }}
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <Box sx={{ py: { xs: '0.5rem', sm: '1rem' } }}>
+            <FindOptions />
+          </Box>
+        </motion.div>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.8, ease: 'easeInOut', delay: 0.1 }}
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <Box sx={{ py: { xs: 2, sm: 3 } }}>
+            <ListingCarousel title="Top Trainers Near You" type="Trainers" />
+          </Box>
+        </motion.div>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.8, ease: 'easeInOut', delay: 0.2 }}
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <Box sx={{ py: { xs: 2, sm: 3 } }}>
+            <ListingCarousel title="Top Dieticians Near You" type="Dietitians" />
+          </Box>
+        </motion.div>
+      </Container>
 
       {/* Add keyframes for bounce animation */}
       <Box
@@ -511,6 +670,8 @@ function HomePage() {
 }
 
 const SequencedScrollReveal = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -526,10 +687,11 @@ const SequencedScrollReveal = () => {
             variant="subtitle1"
             sx={{
               color: 'white',
-              mt: 2,
-              fontSize: { xs: '1.25rem', sm: '1.5rem' },
+              mt: { xs: 1, sm: 2 },
+              fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
               fontWeight: 500,
               textAlign: 'center',
+              px: 2,
             }}
           >
             Become the best version of yourself
@@ -541,14 +703,14 @@ const SequencedScrollReveal = () => {
           <Button
             variant="outlined"
             sx={{
-              mt: 2,
+              mt: { xs: 1, sm: 2 },
               color: 'white',
               borderColor: 'white',
               fontWeight: 'bold',
-              px: { xs: 3, sm: 4 },
-              py: 1.5,
+              px: { xs: 2, sm: 3, md: 4 },
+              py: { xs: 1, sm: 1.5 },
               borderRadius: '999px',
-              fontSize: { xs: '1rem', sm: '1.2rem' },
+              fontSize: { xs: '0.875rem', sm: '1rem', md: '1.2rem' },
               transition: 'all 0.3s ease',
               '&:hover': {
                 backgroundColor: 'rgba(255,255,255,0.1)',

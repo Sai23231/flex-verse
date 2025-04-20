@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import UserProfileLayout from './components/UserProfileLayout';
 
 // Loading component
@@ -69,8 +69,21 @@ const LazyLoaderOverlay = ({ isLoading }: LazyLoaderOverlayProps) => {
  */
 const UserProfile = () => {
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
   useEffect(() => {
+    // Set viewport meta tag for proper mobile responsiveness
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (!viewport) {
+      const meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
+      document.getElementsByTagName('head')[0].appendChild(meta);
+    } else {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
+    }
+    
     // Simulate loading time
     const timer = setTimeout(() => {
       setLoading(false);
