@@ -15,20 +15,20 @@ export const Layout = (props: { component: any }) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <div className="layout-container">
-      <Header />
+      {/* <Header /> */}
       <main
         className="content"
         style={{ paddingBottom: isSmallScreen ? '60px' : '0' }}
       >
         {component}
       </main>
-      {isSmallScreen ? (
+      {/* {isSmallScreen ? (
         <>
           <PhoneFooter />
         </>
       ) : (
         <Footer />
-      )}
+      )} */}
     </div>
   );
 };
