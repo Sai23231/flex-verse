@@ -1,34 +1,23 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { Button, Grid, TextField, Typography } from '@mui/material';
-import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
-import { useSignIn } from 'react-auth-kit';
+import { Button, Grid, TextField, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { useForm } from 'react-hook-form';
-
 import { authApi } from '../API/AuthApi';
-import { forSignUp } from '../assets';
-import { google } from '../assets';
+import bg from '../assets/bg.png';
 import { useNotification } from '../context/NotificationProvider';
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const signIn = useSignIn();
   const { showNotification } = useNotification();
 
   const handleSignIn = () => {
     navigate('/signin');
   };
 
-  const handleSignUpConsultant = () => {
-    navigate('/signupConsultant');
-  };
-
   const {
     handleSubmit,
     register,
     formState: { errors },
-    getValues,
   } = useForm();
 
   const onSubmit = (data: any) => {
@@ -44,206 +33,176 @@ const SignUp = () => {
         navigate('/');
       })
       .catch((error) => {
-        showNotification(true, 'success', 'SignUp Error', error.response.data);
+        showNotification(true, 'error', 'SignUp Error', error.response.data);
       });
   };
 
-  const googleSignup = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      await axios
-        .get('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        })
-        .then((res) =>
-          onSubmit({
-            firstName: res.data['given_name'],
-            lastName: res.data['family_name'],
-            email: res.data['email'],
-            googleId: res.data['sub'],
-          })
-        );
-    },
-    onError: (error) => console.log('Login Failed:', error),
-  });
-
   return (
-    <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-      height="80vh"
-      sx={{
-        backgroundImage: `linear-gradient(rgba(72, 156, 242, 0.8), rgba(0, 0, 0, 0.8)), url(${forSignUp})`,
+    <div
+      style={{
+        backgroundImage: `url(${bg})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        height: '100%',
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         padding: '20px',
       }}
     >
-      <Grid item xs={12} sm={6} md={4}>
-        <Typography
-          sx={{
-            fontWeight: '600',
-            fontSize: '30px',
-            lineHeight: '66.8px',
-            width: '250px',
-            color: 'white',
-          }}
-        >
-          Sign Up
-        </Typography>
-
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '500px',
+          borderRadius: '16px',
+          padding: '32px',
+        }}
+      >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <TextField
-            variant="filled"
-            fullWidth
-            margin="normal"
-            label="First Name"
-            {...register('firstName', { required: true })}
-            error={!!errors.firstName}
-            helperText={errors.firstName ? 'First Name is required' : ''}
-            sx={{ backgroundColor: 'white' }}
-          />
-
-          <TextField
-            variant="filled"
-            fullWidth
-            margin="normal"
-            label="Last Name"
-            {...register('lastName', { required: true })}
-            error={!!errors.lastName}
-            helperText={errors.lastName ? 'Last Name is required' : ''}
-            sx={{ backgroundColor: 'white' }}
-          />
-          <TextField
-            variant="filled"
-            fullWidth
-            margin="normal"
-            label="Email"
-            {...register('email', {
-              required: true,
-              pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
-            })}
-            error={!!errors.email}
-            helperText={
-              errors.email ? 'Please enter a valid email address' : ''
-            }
-            sx={{ backgroundColor: 'white' }}
-          />
-
-          <TextField
-            type="password"
-            variant="filled"
-            fullWidth
-            margin="normal"
-            label="Password"
-            {...register('password', {
-              required: true,
-              minLength: 8,
-              pattern:
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i,
-            })}
-            error={!!errors.password}
-            helperText={
-              errors.password
-                ? 'Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a number, and a special character'
-                : ''
-            }
-            sx={{ backgroundColor: 'white' }}
-          />
-
-          <TextField
-            type="password"
-            variant="filled"
-            fullWidth
-            margin="normal"
-            label="Confirm Password"
-            {...register('confirmPassword', {
-              required: true,
-              validate: (value) => value === getValues('password'),
-            })}
-            error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword ? 'Passwords do not match' : ''}
-            sx={{ backgroundColor: 'white' }}
-          />
-
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ marginTop: '20px' }}
-          >
-            Sign Up
-          </Button>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="First name"
+                InputProps={{
+                  sx: {
+                    bgcolor: 'white',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      border: 'none'
+                    }
+                  }
+                }}
+                {...register('firstName', { required: true })}
+                error={!!errors.firstName}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Last name"
+                InputProps={{
+                  sx: {
+                    bgcolor: 'white',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      border: 'none'
+                    }
+                  }
+                }}
+                {...register('lastName', { required: true })}
+                error={!!errors.lastName}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Email"
+                InputProps={{
+                  sx: {
+                    bgcolor: 'white',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      border: 'none'
+                    }
+                  }
+                }}
+                {...register('email', {
+                  required: true,
+                  pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i,
+                })}
+                error={!!errors.email}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Password"
+                type="password"
+                InputProps={{
+                  sx: {
+                    bgcolor: 'white',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      border: 'none'
+                    }
+                  }
+                }}
+                {...register('password', {
+                  required: true,
+                  minLength: 8,
+                  pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/i,
+                })}
+                error={!!errors.password}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox 
+                    sx={{ 
+                      color: 'white',
+                      '&.Mui-checked': {
+                        color: '#4799E9',
+                      },
+                    }} 
+                  />
+                }
+                label={
+                  <Typography sx={{ color: 'white', fontSize: '14px' }}>
+                    I agree to the terms and conditions
+                  </Typography>
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                fullWidth
+                sx={{
+                  textTransform: 'none',
+                  bgcolor: '#4799E9',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  color: 'black',
+                  '&:hover': {
+                    bgcolor: '#3d83ca',
+                  },
+                }}
+              >
+                Register
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography
+                sx={{
+                  color: 'white',
+                  textAlign: 'center',
+                  fontSize: '14px',
+                  mt: 1,
+                }}
+              >
+                Already have an account?{' '}
+                <span
+                  onClick={handleSignIn}
+                  style={{ 
+                    color: '#FF8551', 
+                    cursor: 'pointer',
+                    textDecoration: 'none'
+                  }}
+                >
+                  Sign-in
+                </span>
+              </Typography>
+            </Grid>
+          </Grid>
         </form>
-
-        <Typography
-          variant="body2"
-          sx={{
-            margin: '10px 0',
-            lineHeight: '66.8px',
-            width: '250px',
-            color: 'white',
-          }}
-        >
-          Already have an account?{' '}
-          <Button
-            variant="text"
-            color="inherit"
-            sx={{ textTransform: 'none', padding: 0, fontWeight: 'bold' }}
-            onClick={handleSignIn}
-          >
-            Sign In
-          </Button>
-        </Typography>
-        <Button
-          onClick={() => googleSignup()}
-          variant="contained"
-          fullWidth
-          style={{
-            backgroundColor: 'white',
-            color: 'black',
-            textTransform: 'none',
-          }}
-          startIcon={
-            <img
-              src={google}
-              alt="logo"
-              style={{ height: '24px', width: '24px' }}
-            />
-          }
-        >
-          <Typography variant="body1">Sign Up With Google</Typography>
-        </Button>
-        <Typography
-          variant="body2"
-          sx={{
-            margin: '10px 0',
-            lineHeight: '22px', // Adjust line height
-            width: '100%',
-            color: 'white',
-            display: 'flex', // Use flex to align the button
-            alignItems: 'center', // Vertically align items
-          }}
-        >
-          Are you a certified dietician or trainer?{' '}
-          <Button
-            variant="text"
-            color="inherit"
-            sx={{
-              textTransform: 'none',
-              padding: 0,
-              fontWeight: 'bold',
-              marginLeft: 1,
-            }}
-            onClick={handleSignUpConsultant}
-          >
-            Click here to sign up as a consultant!
-          </Button>
-        </Typography>
-      </Grid>
-    </Grid>
+      </div>
+    </div>
   );
 };
 
