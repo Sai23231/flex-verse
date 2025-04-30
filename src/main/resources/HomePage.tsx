@@ -1026,7 +1026,16 @@ function HomePage() {
         </Box>
       </Box>
       {/* Testimonials Section */}
-      <Container maxWidth="lg" sx={{ my: 8, bgcolor: 'white' }}>
+      <Container
+        maxWidth="lg"
+        sx={{
+          mt: 10,
+          px: { xs: 2, sm: 4, md: 6 }, // Add horizontal padding
+          py: 8, // Add vertical padding
+          bgcolor: 'white',
+          minHeight: '100vh', // Ensure full vertical height
+        }}
+      >
         <Typography
           variant="h4"
           fontFamily="Poppins"
@@ -1048,49 +1057,47 @@ function HomePage() {
         >
           Testimonials
         </Typography>
+
         <Grid container spacing={3}>
           {testimonials.map((testimonial) => (
             <Grid item xs={12} sm={6} md={4} key={testimonial.id}>
               <Paper
                 elevation={2}
                 sx={{
-                  p: 3,
-                  height: '100%',
+                  p: 2,
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-between',
+                  justifyContent: 'space-between', // This pushes the bottom section down
                   borderRadius: 2,
                   bgcolor: '#D9D9D9',
-                  position: 'relative',
-                  pb: 7,
+                  minHeight: 220,
                 }}
               >
                 <Box>
                   <Typography
                     color="orange"
                     fontFamily="Poppins"
-                    fontSize="20px"
+                    fontSize="16px"
                     mb={1}
                   >
                     Posted on {testimonial.date}
                   </Typography>
-                  <Typography fontFamily="Poppins" fontSize="18px">
+                  <Typography fontFamily="Poppins" fontSize="15px">
                     {testimonial.text}
                   </Typography>
                 </Box>
+
                 <Box
                   sx={{
-                    position: 'absolute',
-                    bottom: 16,
-                    left: 24,
                     display: 'flex',
                     alignItems: 'center',
+                    mt: 2, // margin-top to create some spacing
                   }}
                 >
                   <Box
                     sx={{
-                      width: 32,
-                      height: 32,
+                      width: 28,
+                      height: 28,
                       borderRadius: '50%',
                       bgcolor: '#808080',
                       display: 'flex',
@@ -1098,11 +1105,10 @@ function HomePage() {
                       justifyContent: 'center',
                       color: 'white',
                       fontWeight: 'bold',
-                      position: 'relative',
-                      fontSize: '14px',
+                      fontSize: '12px',
                     }}
                   >
-                    <Box />#{testimonial.id}
+                    #{testimonial.id}
                   </Box>
                 </Box>
               </Paper>
@@ -1110,8 +1116,19 @@ function HomePage() {
           ))}
         </Grid>
       </Container>
+
       {/* FAQ Section */}
-      <Container sx={{ my: 8, bgcolor: 'white', width: 'full' }}>
+      <Container
+        sx={{
+          my: 8,
+          bgcolor: 'white',
+          width: '100%',
+          minHeight: '90vh',
+          display: 'flex',
+          alignItems: 'center', // centers content vertically
+          justifyContent: 'center', // optional: centers horizontally too
+        }}
+      >
         <Box
           sx={{
             border: '2px solid black',
