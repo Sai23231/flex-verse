@@ -47,6 +47,14 @@ import { mainhomepage } from '../assets';
 import { ListingCarousel } from './Commons/ListingCarousel';
 import FindOptions from './FindOptions/FindOptions';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination } from 'swiper/modules';
+
+import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 /** Responsive NavBar component */
 function NavBar() {
   const theme = useTheme();
@@ -1026,206 +1034,310 @@ function HomePage() {
         </Box>
       </Box>
       {/* Testimonials Section */}
+
       <Container
-        maxWidth="lg"
+        maxWidth={false}
         sx={{
           mt: 10,
-          px: { xs: 2, sm: 4, md: 6 }, // Add horizontal padding
-          py: 8, // Add vertical padding
-          bgcolor: 'white',
-          minHeight: '100vh', // Ensure full vertical height
+          px: { xs: 2, sm: 4, md: 6 },
+          py: 8,
+          bgcolor: '#f5f5f5',
+          borderRadius: '20px',
         }}
       >
         <Typography
           variant="h4"
           fontFamily="Poppins"
           fontWeight="600"
+          textAlign="center"
           sx={{
-            mb: 4,
+            mb: 6,
             position: 'relative',
-            display: 'inline-block',
             '&::after': {
               content: '""',
               position: 'absolute',
-              bottom: -5,
-              left: 0,
-              width: '100%',
-              height: 3,
-              backgroundColor: '#000',
+              bottom: -8,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '80px',
+              height: 4,
+              backgroundColor: '#FF5722',
+              borderRadius: '2px',
             },
           }}
         >
           Testimonials
         </Typography>
 
-        <Grid container spacing={3}>
-          {testimonials.map((testimonial) => (
-            <Grid item xs={12} sm={6} md={4} key={testimonial.id}>
-              <Paper
-                elevation={2}
-                sx={{
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between', // This pushes the bottom section down
-                  borderRadius: 2,
-                  bgcolor: '#D9D9D9',
-                  minHeight: 220,
-                }}
-              >
-                <Box>
-                  <Typography
-                    color="orange"
-                    fontFamily="Poppins"
-                    fontSize="16px"
-                    mb={1}
-                  >
-                    Posted on {testimonial.date}
-                  </Typography>
-                  <Typography fontFamily="Poppins" fontSize="15px">
-                    {testimonial.text}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    mt: 2, // margin-top to create some spacing
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: '50%',
-                      bgcolor: '#808080',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'white',
-                      fontWeight: 'bold',
-                      fontSize: '12px',
-                    }}
-                  >
-                    #{testimonial.id}
-                  </Box>
-                </Box>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-
-      {/* FAQ Section */}
-      <Container
-        sx={{
-          my: 8,
-          bgcolor: 'white',
-          width: '100%',
-          minHeight: '90vh',
-          display: 'flex',
-          alignItems: 'center', // centers content vertically
-          justifyContent: 'center', // optional: centers horizontally too
-        }}
-      >
-        <Box
-          sx={{
-            border: '2px solid black',
-            borderRadius: '24px',
-            p: 4,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            gap: 4,
+        <Swiper
+          spaceBetween={30}
+          pagination={{ clickable: true }}
+          modules={[Pagination]}
+          breakpoints={{
+            640: { slidesPerView: 1 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
           }}
         >
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              fontFamily="Poppins"
-              fontWeight="700"
-              fontSize="24px"
-              color="#FF5722"
-              mb={3}
-            >
-              FAQ
-            </Typography>
-            {faqItems.map((item, index) => (
-              <Box
-                key={index}
-                onClick={() => setSelectedFaq(index)}
-                sx={{
-                  p: 2,
-                  mb: 2,
-                  bgcolor: selectedFaq === index ? '#78ABFF' : '#FF9D79',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  border: '2px solid black',
-                }}
-              >
-                <Typography
-                  fontFamily="Poppins"
-                  fontSize="16px"
-                  color={selectedFaq === index ? 'white' : 'black'}
+          {testimonials.map((testimonial, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <SwiperSlide key={testimonial.id}>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{ height: '100%' }}
                 >
-                  {item.question}
-                </Typography>
-                {selectedFaq === index && (
-                  <Box
+                  <Paper
+                    elevation={3}
                     sx={{
-                      bgcolor: 'white',
-                      borderRadius: '50%',
-                      width: 24,
-                      height: 24,
+                      p: 4,
+                      minHeight: 250,
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      borderRadius: '20px',
+                      bgcolor: isEven ? '#FF9D79' : '#78ABFF',
+                      textAlign: 'center',
+                      color: 'white',
+                      boxShadow: '0px 6px 20px rgba(0,0,0,0.2)',
+                      transition: 'all 0.3s ease',
                     }}
                   >
-                    <PlayArrow sx={{ fontSize: 16, color: '#78ABFF' }} />
+                    <Typography
+                      fontFamily="Poppins"
+                      fontSize="16px"
+                      mb={2}
+                      sx={{ opacity: 0.9 }}
+                    >
+                      {testimonial.date}
+                    </Typography>
+                    <Typography
+                      fontFamily="Poppins"
+                      fontSize="18px"
+                      fontWeight="500"
+                      mb={3}
+                    >
+                      “{testimonial.text}”
+                    </Typography>
+                    <Box
+                      sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}
+                    >
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          bgcolor: 'white',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: isEven ? '#FF9D79' : '#78ABFF',
+                          fontWeight: 'bold',
+                          fontSize: '16px',
+                          border: `2px solid ${isEven ? '#FF9D79' : '#78ABFF'}`,
+                        }}
+                      >
+                        #{testimonial.id}
+                      </Box>
+                    </Box>
+                  </Paper>
+                </motion.div>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </Container>
+      {/* <Container
+        maxWidth="lg"
+        sx={{
+          mt: 10,
+          px: { xs: 2, sm: 4, md: 6 },
+          py: 8,
+          bgcolor: '#f5f5f5',
+          borderRadius: '20px',
+        }}
+      >
+        <Typography
+          variant="h4"
+          fontFamily="Poppins"
+          fontWeight="600"
+          textAlign="center"
+          sx={{
+            mb: 6,
+            position: 'relative',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -8,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '80px',
+              height: 4,
+              backgroundColor: '#FF5722',
+              borderRadius: '2px',
+            },
+          }}
+        >
+          Testimonials
+        </Typography>
+
+        <Swiper
+          spaceBetween={30}
+          pagination={{ clickable: true }}
+          modules={[Pagination]}
+          breakpoints={{
+            640: { slidesPerView: 1 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+          }}
+        >
+          {testimonials.map((testimonial) => (
+            <SwiperSlide key={testimonial.id}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                style={{ height: '100%' }}
+              >
+                <Paper
+                  elevation={3}
+                  sx={{
+                    p: 4,
+                    minHeight: 250,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    borderRadius: '20px',
+                    bgcolor: 'white',
+                    textAlign: 'center',
+                    boxShadow: '0px 4px 20px rgba(0,0,0,0.1)',
+                  }}
+                >
+                  <Typography
+                    fontFamily="Poppins"
+                    fontSize="16px"
+                    color="gray"
+                    mb={2}
+                  >
+                    {testimonial.date}
+                  </Typography>
+                  <Typography
+                    fontFamily="Poppins"
+                    fontSize="18px"
+                    fontWeight="500"
+                    mb={3}
+                  >
+                    "{testimonial.text}"
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      mt: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: '50%',
+                        bgcolor: '#70B1FF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      #{testimonial.id}
+                    </Box>
                   </Box>
-                )}
-              </Box>
-            ))}
-          </Box>
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Typography
-              fontFamily="Poppins"
-              fontWeight="700"
-              fontSize="24px"
-              color="#78ABFF"
-              mb={2}
-              alignSelf="center"
-            >
-              ANSWERS
-            </Typography>
-            <Box
-              sx={{
+                </Paper>
+              </motion.div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </Container> */}
+
+      {/* FAQ Section */}
+
+      <Container
+        maxWidth={false}
+        sx={{
+          my: 10,
+          py: 6,
+          px: 4,
+          borderRadius: '24px',
+          bgcolor: '#ffffff',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        }}
+      >
+        <Typography
+          variant="h4"
+          fontFamily="Poppins"
+          fontWeight="600"
+          textAlign="center"
+          sx={{
+            mb: 6,
+            position: 'relative',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -8,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '80px',
+              height: 4,
+              backgroundColor: '#FF5722',
+              borderRadius: '2px',
+            },
+          }}
+        >
+          FAQ's
+        </Typography>
+
+        {faqItems.map((item, index) => (
+          <Accordion
+            key={index}
+            sx={{
+              mb: 2,
+              border: '1px solid #ddd',
+              borderRadius: '12px',
+              '&::before': { display: 'none' },
+              bgcolor: '#FF9D79',
+              color: '#000',
+              boxShadow: 'none',
+              '&.Mui-expanded': {
                 bgcolor: '#78ABFF',
-                borderRadius: '12px',
-                p: 6,
-                flexGrow: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid black',
+                color: '#fff',
+              },
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ color: '#000' }} />}
+              aria-controls={`faq-${index}-content`}
+              id={`faq-${index}-header`}
+              sx={{
+                fontFamily: 'Poppins',
+                fontWeight: '600',
+                fontSize: '18px',
               }}
             >
-              <Typography
-                fontFamily="Poppins"
-                fontSize="18px"
-                color="white"
-                textAlign="center"
-              >
-                {faqItems[selectedFaq].answer}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
+              {item.question}
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{
+                fontFamily: 'Poppins',
+                fontSize: '16px',
+                borderTop: '1px solid rgba(255,255,255,0.3)',
+              }}
+            >
+              {item.answer}
+            </AccordionDetails>
+          </Accordion>
+        ))}
       </Container>
+
       {/* Footer */}
       <Box
         sx={{
