@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -8,9 +8,13 @@ import {
   Grid,
   Divider,
   Tooltip,
+  useMediaQuery,
+  useTheme,
+  IconButton,
+  Drawer,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
- import FeaturedContentSlider from './FeaturedContentSlider';
+import FeaturedContentSlider from './FeaturedContentSlider';
 import heroImage from '../../../assets/heroimage.png';
 import profileImage from '../../../assets/profile.png';
 import logo from '../../../assets/logo.png';
@@ -18,15 +22,20 @@ import MenuIcon from '@mui/icons-material/Menu';
 import EmailIcon from '@mui/icons-material/Email';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import PeopleIcon from '@mui/icons-material/People';
+import CloseIcon from '@mui/icons-material/Close';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { alpha } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+
 const OrangeButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#FF7E35',
-  color: '#fff',
+  color: 'black',
   borderRadius: '25px',
   padding: '8px 16px',
   textTransform: 'none',
   fontWeight: 500,
   '&:hover': {
-    backgroundColor: '#e06b29',
+    backgroundColor: '#FF7E35',
   },
 }));
 
@@ -53,6 +62,15 @@ const SidebarBox = styled(Box)(({ theme }) => ({
 }));
 
 function Featured() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate('/userProfile');
+  }
+
   const meetings = [
     { day: 'Day 17', type: 'Legs' },
     { day: 'Day 17', type: 'Shoulder' },
@@ -69,51 +87,90 @@ function Featured() {
     { icon: <PeopleIcon />, label: 'Community' },
   ];
 
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const SidebarContent = () => (
+    <Box
+      sx={{
+        width: isMobile ? '100%' : '60px',
+        backgroundColor: '#FF7E35',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '16px 0',
+        height: isMobile ? 'auto' : '100%',
+      }}
+    >
+      {/* Logo */}
+      <Box sx={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', width: '100%', px: 2 }}>
+        <img src={logo} alt="Logo" width="40" />
+        {isMobile && (
+          <IconButton onClick={toggleDrawer} sx={{ color: 'white' }}>
+            <CloseIcon />
+          </IconButton>
+        )}
+      </Box>
+
+      {/* Custom Styled Boxes with Icons */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+        {sidebarIcons.map((item, index) => (
+          <Tooltip title={item.label} placement="right" arrow key={index}>
+            <SidebarBox>
+              {item.icon}
+            </SidebarBox>
+          </Tooltip>
+        ))}
+      </Box>
+    </Box>
+  );
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       {/* Hero Section */}
-      <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-        {/* Left Sidebar */}
-        <Box
+      <Box sx={{ display: 'flex', height: { xs: 'auto', md: '100vh' }, overflow: 'hidden', flexDirection: { xs: 'column', md: 'row' } }}>
+        {/* Left Sidebar - Hidden on mobile, shown in drawer */}
+        {!isMobile && <SidebarContent />}
+        
+        {/* Mobile Menu Button */}
+        {isMobile && (
+          <Box sx={{ position: 'absolute', top: 16, left: 16, zIndex: 10 }}>
+            <IconButton onClick={toggleDrawer} sx={{ color: '#FF7E35' }}>
+              <MenuIcon />
+            </IconButton>
+          </Box>
+        )}
+
+        {/* Mobile Drawer */}
+        <Drawer
+          anchor="left"
+          open={drawerOpen && isMobile}
+          onClose={toggleDrawer}
           sx={{
-            width: '60px',
-            backgroundColor: '#FF7E35',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            padding: '16px 0',
+            '& .MuiDrawer-paper': {
+              width: '100%',
+              maxWidth: '300px',
+            },
           }}
         >
-          {/* Logo */}
-          <Box sx={{ marginBottom: '40px' }}>
-            <img src={logo} alt="Logo" width="40" />
-          </Box>
-
-          {/* Custom Styled Boxes with Icons */}
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-            {sidebarIcons.map((item, index) => (
-              <Tooltip title={item.label} placement="right" arrow key={index}>
-                <SidebarBox>
-                  {item.icon}
-                </SidebarBox>
-              </Tooltip>
-            ))}
-          </Box>
-        </Box>
+          <SidebarContent />
+        </Drawer>
 
         {/* Main Content */}
-        <Box sx={{ flex: 1, display: 'flex' }}>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
           {/* Left Hero Image Section */}
           <Box
             sx={{
-              flex: 2,
+              flex: { xs: 'auto', md: 2 },
               position: 'relative',
               backgroundColor: '#000',
               color: 'white',
-              padding: '40px',
+              padding: { xs: '24px', md: '40px' },
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-end',
+              minHeight: { xs: '50vh', md: '100vh' },
             }}
           >
             <Box
@@ -134,13 +191,13 @@ function Featured() {
               <img src={heroImage} alt="Hero" />
             </Box>
 
-            <Box sx={{ position: 'relative', zIndex: 1, marginBottom: '80px' }}>
+            <Box sx={{ position: 'relative', zIndex: 1, marginBottom: { xs: '40px', md: '80px' } }}>
               <Typography
                 variant="h2"
                 sx={{
                   fontWeight: 800,
                   color: '#FF7E35',
-                  fontSize: '3.2rem',
+                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3.2rem' },
                   lineHeight: 1.1,
                   marginBottom: '8px',
                 }}
@@ -158,12 +215,14 @@ function Featured() {
               >
                 The ultimate platform to reach your fitness goals.
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2 ,}}>
-                <OrangeButton endIcon={<span>→</span>}>Find a Gym</OrangeButton>
+              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                <OrangeButton endIcon={<ArrowForwardIcon />}>Find a Gym</OrangeButton>
                 <OrangeButton
                   sx={{
+                    border: `1px solid ${'#FF7E35'}`,
                     backgroundColor: '#FF7E35',
-                    border: '1px solid #FF7E35'
+                    color: 'black',
+
                   }}
                 >
                   About us
@@ -173,13 +232,19 @@ function Featured() {
           </Box>
 
           {/* Right Panel */}
-          <Box sx={{ flex: 1, backgroundColor: '#FFF', padding: '24px' }}>
+          <Box sx={{ 
+            flex: { xs: 'auto', md: 1 }, 
+            backgroundColor: '#FFF', 
+            padding: { xs: '16px', sm: '24px' },
+            maxWidth: { md: '400px' },
+            width: '100%',
+          }}>
             {/* User Profile */}
             <Paper
               elevation={0}
               sx={{
                 backgroundColor: '#FFD5BB',
-                padding: '16px',
+                padding: { xs: '12px', sm: '16px' },
                 borderRadius: '12px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -187,24 +252,27 @@ function Featured() {
                 marginBottom: '24px',
               }}
             >
-              <Box sx={{ width: '80px', height: '80px', marginBottom: '12px' }}>
+              <Box sx={{ width: { xs: '60px', sm: '80px' }, height: { xs: '60px', sm: '80px' }, marginBottom: '12px' }}>
                 <Avatar
                   sx={{ width: '100%', height: '100%', border: '2px solid #4CB3FF' }}
                   src={profileImage}
                   alt="User Profile"
                 />
               </Box>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: { xs: '0.9rem', sm: '1.1rem' } }}>
                 Abubackar Sidhiq
               </Typography>
               <Button
                 variant="contained"
+                onClick={handleNavigate}
                 sx={{
                   mt: 2,
                   borderRadius: '25px',
                   backgroundColor: '#4CB3FF',
+                  color: '#000',
                   textTransform: 'none',
                   fontWeight: 'normal',
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   '&:hover': {
                     backgroundColor: '#3a9fea',
                   },
@@ -215,33 +283,44 @@ function Featured() {
             </Paper>
 
             {/* Upcoming Meetings */}
-            <Box sx={{ marginBottom: '24px' }}>
+            <Box sx={{ 
+                marginBottom: '24px', 
+                backgroundColor: '#FF7E35',
+                borderRadius: '12px', 
+                padding: { xs: '12px', sm: '16px' },
+                color: 'white'
+            }}>
               <Box sx={{ marginBottom: '24px', position: 'relative' }}>
                 <Typography
                   variant="h6"
                   sx={{
                     fontWeight: 600,
-                    color: '#FF7E35',
-                    fontSize: '1.25rem',
+                    color: 'white',
+                    fontSize: { xs: '1rem', sm: '1.25rem' },
                     padding: '0 0 8px 0',
                   }}
                 >
                   Upcoming meetings
                 </Typography>
-                <Divider sx={{ backgroundColor: '#FF7E35', height: '2px' }} />
+                <Divider sx={{ backgroundColor: 'black', height: '1px' }} />
               </Box>
 
               <Grid container spacing={2}>
                 <Grid item xs={8}>
                   {meetings.map((meeting, index) => (
-                    <DayItem key={index}>
-                      <Typography variant="body2" color="textSecondary">
-                        {meeting.day}
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                        {meeting.type}
-                      </Typography>
-                    </DayItem>
+                    <React.Fragment key={index}>
+                      <DayItem sx={{ paddingBottom: '8px' }}>
+                        <Typography variant="body2" color="inherit" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                          {meeting.day}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'medium', fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
+                          {meeting.type}
+                        </Typography>
+                      </DayItem>
+                      {index < meetings.length - 1 && (
+                        <Divider sx={{ backgroundColor: 'black', height: '1px' }} />
+                      )}
+                    </React.Fragment>
                   ))}
                 </Grid>
                 <Grid item xs={4}>
@@ -252,16 +331,16 @@ function Featured() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       height: '100%',
-                      backgroundColor: '#FF7E35',
+                      backgroundColor: 'transparent',
                       color: 'white',
                       borderRadius: '12px',
-                      padding: '16px',
+                      padding: { xs: '12px', sm: '16px' },
                     }}
                   >
-                    <Typography variant="h2" sx={{ fontWeight: 'bold', fontSize: '3rem' }}>
+                    <Typography variant="h2" sx={{ fontWeight: 'bold', fontSize: { xs: '2rem', sm: '3rem' } }}>
                       13
                     </Typography>
-                    <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
+                    <Typography variant="body2" sx={{ fontSize: { xs: '0.7rem', sm: '0.85rem' } }}>
                       Days remaining
                     </Typography>
                   </Box>

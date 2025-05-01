@@ -12,13 +12,15 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Container,
+  Avatar,
   Grid,
-  CssBaseline,
   Paper,
   TextField,
   Link,
-  Container,
-  Hidden,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
 import {
   Facebook,
@@ -29,11 +31,12 @@ import {
   Close,
   KeyboardArrowDown,
   LinkedIn,
-  PlayArrow,
 } from '@mui/icons-material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useIsAuthenticated } from 'react-auth-kit';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import main_homepage from '../assets/main_homepage.png';
 import manTakingHeaviestWeight2 from '../assets/manTakingHeaviestWeight2.png';
 import athleticManWomanWithDumbbellsTrainingPracticingGym2 from '../assets/athleticManWomanWithDumbbellsTrainingPracticingGym2.png';
 import sideViewWomanDoingSportWithStats2 from '../assets/sideViewWomanDoingSportWithStats2.png';
@@ -42,10 +45,15 @@ import footerText from '../assets/footerText.png';
 import footerBlueGrad from '../assets/footerBlueGrad.png';
 import footerOrangeGrad from '../assets/footerOrangeGrad.png';
 import newsLetter from '../assets/newsLetter.png';
-
-import { mainhomepage } from '../assets';
+import logo from '../assets/logo.png';
 import { ListingCarousel } from './Commons/ListingCarousel';
 import FindOptions from './FindOptions/FindOptions';
+import { useNavigate } from 'react-router-dom';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination } from 'swiper/modules';
 
 /** Responsive NavBar component */
 function NavBar() {
@@ -53,11 +61,9 @@ function NavBar() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navItems = ['HOME', 'STORE', 'BLOGS', 'ABOUT US', 'CONTACT US'];
   const [drawerOpen, setDrawerOpen] = useState(false);
-
   const handleDrawerToggle = () => {
     setDrawerOpen((prev) => !prev);
   };
-
   return (
     <Fragment>
       {isMobile ? (
@@ -67,29 +73,53 @@ function NavBar() {
             top: 0,
             left: 0,
             right: 0,
-            p: 1,
+            p: 1.5,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             zIndex: 1100,
-            backgroundColor: 'transparent',
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            backdropFilter: 'blur(5px)',
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 'bold',
-              color: '#FFC107',
-            }}
-          >
-            FLEX‑VERSE
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              component="img"
+              src={logo}
+              alt="FLEX-VERSE Logo"
+              sx={{
+                width: 32,
+                height: 32,
+                objectFit: 'contain',
+              }}
+            />
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontWeight: 'bold',
+                color: '#FFC107',
+                fontSize: '1rem',
+              }}
+            >
+              FLEX‑VERSE
+            </Typography>
+          </Box>
           <IconButton onClick={handleDrawerToggle} sx={{ color: 'white' }}>
             <Menu />
           </IconButton>
         </Box>
       ) : (
-        <Stack direction="row" spacing={4} sx={{ fontWeight: 600, mb: 4 }}>
+        <Stack
+          direction="row"
+          spacing={4}
+          sx={{
+            fontWeight: 600,
+            mb: 4,
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
           {navItems.map((item, index) => (
             <Box
               key={index}
@@ -120,7 +150,6 @@ function NavBar() {
           ))}
         </Stack>
       )}
-
       {/* Mobile Drawer */}
       <Drawer
         anchor="left"
@@ -128,7 +157,8 @@ function NavBar() {
         onClose={handleDrawerToggle}
         sx={{
           '& .MuiDrawer-paper': {
-            width: '70%',
+            width: '80%',
+            maxWidth: '300px',
             backgroundColor: '#1e2539',
             color: 'white',
           },
@@ -139,13 +169,45 @@ function NavBar() {
             <Close />
           </IconButton>
         </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            px: 2,
+            py: 1,
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
+          }}
+        >
+          <Box
+            component="img"
+            src={logo}
+            alt="FLEX-VERSE Logo"
+            sx={{
+              width: 32,
+              height: 32,
+              objectFit: 'contain',
+            }}
+          />
+          <Typography
+            sx={{
+              fontWeight: 'bold',
+              color: '#FFC107',
+              fontSize: '1rem',
+            }}
+          >
+            FLEX‑VERSE
+          </Typography>
+        </Box>
         <List>
           {navItems.map((item, index) => (
             <ListItem key={index} disablePadding onClick={handleDrawerToggle}>
               <ListItemButton>
                 <ListItemText
                   primary={item}
-                  primaryTypographyProps={{ sx: { fontWeight: 'bold' } }}
+                  primaryTypographyProps={{
+                    sx: { fontWeight: 'bold' },
+                  }}
                 />
               </ListItemButton>
             </ListItem>
@@ -183,11 +245,16 @@ function useScrollProgress(ref: React.RefObject<HTMLElement>) {
 
 /** FLEX‑VERSE Section with scroll-based animation */
 function FlexVerseSection({ progress = 0 }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   // Mapping progress values smoothly
   const blurValue = 50 * progress;
   // Calculate scale based on scroll progress (3x to minimum scale)
-  const minScale = 0.667; // This ensures minimum size of 80px (80/120 = 0.667)
-  const scaleValue = Math.max(3 - 2 * progress, minScale);
+  const minScale = isMobile ? 0.4 : 0.667; // Even smaller minimum scale on mobile
+  const scaleValue = Math.max(
+    isMobile ? 2.2 - 1.5 * progress : 3 - 2 * progress,
+    minScale
+  );
   // Enhanced overlay opacity for darker tint
   const overlayOpacity = 0.2 + 0.6 * progress;
   // Calculate if we should stick based on text size
@@ -243,6 +310,9 @@ function FlexVerseSection({ progress = 0 }) {
           position: 'relative',
           zIndex: 3,
           scale: scaleValue,
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
         }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
       >
@@ -252,16 +322,21 @@ function FlexVerseSection({ progress = 0 }) {
             color: 'transparent',
             fontWeight: 600,
             fontSize: {
-              xs: 'clamp(80px, 4rem, 4rem)',
-              sm: 'clamp(80px, 6rem, 6rem)',
+              xs: 'clamp(30px, 12vw, 60px)',
+              sm: 'clamp(60px, 18vw, 100px)',
               md: 'clamp(80px, 8rem, 8rem)',
             },
             textTransform: 'uppercase',
-            letterSpacing: '0.2rem',
+            letterSpacing: { xs: '0.05rem', sm: '0.1rem', md: '0.2rem' },
             userSelect: 'none',
-            WebkitTextStroke: '2px white',
+            WebkitTextStroke: { xs: '1px white', sm: '2px white' },
             background: 'transparent',
             mixBlendMode: 'normal',
+            textAlign: 'center',
+            px: 2,
+            mx: 'auto',
+            width: 'fit-content',
+            maxWidth: '100%',
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -282,7 +357,9 @@ function FlexVerseSection({ progress = 0 }) {
           zIndex: 3,
           textAlign: 'center',
           overflow: 'hidden',
-          mt: 4,
+          mt: { xs: 2, sm: 4 },
+          px: 2,
+          width: '100%',
         }}
       >
         <motion.div
@@ -301,9 +378,9 @@ function FlexVerseSection({ progress = 0 }) {
             variant="h5"
             sx={{
               color: 'white',
-              mb: 2,
+              mb: { xs: 1, sm: 2 },
               fontWeight: 300,
-              fontSize: { xs: '1.25rem', sm: '1.5rem' },
+              fontSize: { xs: '0.875rem', sm: '1.25rem', md: '1.5rem' },
               textShadow: '0 2px 4px rgba(0,0,0,0.2)',
             }}
           >
@@ -328,7 +405,7 @@ function FlexVerseSection({ progress = 0 }) {
             sx={{
               color: 'white',
               fontWeight: 600,
-              fontSize: { xs: '2rem', sm: '2.5rem' },
+              fontSize: { xs: '1.25rem', sm: '2rem', md: '2.5rem' },
               textShadow: '0 2px 4px rgba(0,0,0,0.2)',
             }}
           >
@@ -340,77 +417,20 @@ function FlexVerseSection({ progress = 0 }) {
   );
 }
 
-const SequencedScrollReveal = () => {
-  const [step, setStep] = useState(0);
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setStep(1), 1000),
-      setTimeout(() => setStep(2), 2000),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, []);
-  return (
-    <>
-      {step >= 1 && (
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: 'easeInOut' }}
-        >
-          <Typography
-            variant="subtitle1"
-            sx={{
-              color: 'white',
-              mt: 2,
-              fontSize: { xs: '1.25rem', sm: '1.5rem' },
-              fontWeight: 500,
-              textAlign: 'center',
-            }}
-          >
-            Become the best version of yourself
-          </Typography>
-        </motion.div>
-      )}
-      {step >= 2 && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
-        >
-          <Button
-            variant="outlined"
-            sx={{
-              mt: 2,
-              color: 'white',
-              borderColor: 'white',
-              fontWeight: 'bold',
-              px: { xs: 3, sm: 4 },
-              py: 1.5,
-              borderRadius: '999px',
-              fontSize: { xs: '1rem', sm: '1.2rem' },
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                transform: 'scale(1.05)',
-              },
-            }}
-          >
-            Our Services
-          </Button>
-        </motion.div>
-      )}
-    </>
-  );
-};
-
 /** Main HomePage Component */
 function HomePage() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isAuthenticated = useIsAuthenticated();
   const [scrollY, setScrollY] = useState(0);
   const [locked, setLocked] = useState(true);
   const [selectedFaq, setSelectedFaq] = React.useState(0);
   const [percent, setPercent] = useState(0);
   const boxRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    navigate('/signin');
+  };
   // Refs for tracking sections
   const heroRef = useRef(null);
   const flexVerseRef = useRef(null);
@@ -429,7 +449,6 @@ function HomePage() {
   const maxScroll = 300;
   const scale = scrollY < maxScroll ? 1 + (scrollY / maxScroll) * 0.2 : 1.2;
   const opacity = scrollY < maxScroll ? 1 - scrollY / maxScroll : 0;
-  //Horizontal Scroll
   useEffect(() => {
     let animationFrameId: number;
     const handleScroll = () => {
@@ -510,9 +529,9 @@ function HomePage() {
       answer: 'Please contact our support team for any other questions.',
     },
   ];
-  const handleFaqClick = (index: number) => {
-    setSelectedFaq(index);
-  };
+  // Update for FLEX-VERSE section height to be smaller on mobile
+  const flexVerseSectionHeight = isMobile ? '200vh' : '250vh';
+
   return (
     <>
       {/* Screen Lock Overlay */}
@@ -535,13 +554,16 @@ function HomePage() {
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              fontSize: '2rem',
+              fontSize: isMobile ? '1.5rem' : '2rem',
+              textAlign: 'center',
+              padding: '0 1rem',
             }}
           >
             Welcome to FLEX‑VERSE
           </motion.div>
         )}
       </AnimatePresence>
+
       {/* Background Image with Zoom Effect */}
       <Box
         sx={{
@@ -550,7 +572,7 @@ function HomePage() {
           left: 0,
           width: '100%',
           height: '100vh',
-          backgroundImage: `url(${mainhomepage})`,
+          backgroundImage: `url(${main_homepage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           transform: `scale(${scale})`,
@@ -561,13 +583,14 @@ function HomePage() {
             position: 'absolute',
             top: 0,
             left: 0,
-            // width: '100%',
+            width: '100%',
             height: '100%',
             backdropFilter: 'blur(3px)',
             backgroundColor: 'rgba(0, 0, 0, 0.2)',
           },
         }}
       />
+
       {/* Hero Section */}
       <motion.div
         ref={heroRef}
@@ -578,19 +601,21 @@ function HomePage() {
         <Box
           sx={{
             position: 'relative',
-            minHeight: '90vh',
+            minHeight: '100vh',
             color: 'white',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
             textAlign: 'center',
-            px: 2,
-            py: 3,
+            px: { xs: 2, sm: 3 },
+            py: { xs: 4, sm: 3 },
+            pt: isMobile ? '60px' : 3, // Add extra padding top for mobile to account for fixed navbar
           }}
         >
           {/* NavBar (Responsive) */}
           <NavBar />
+
           {/* Hero Content */}
           <Box
             sx={{
@@ -599,7 +624,8 @@ function HomePage() {
               flexDirection: 'column',
               justifyContent: 'center',
               maxWidth: 'md',
-              mb: 2,
+              mb: { xs: 3, sm: 2 },
+              mt: isMobile ? 2 : 0,
             }}
           >
             <Typography
@@ -607,10 +633,9 @@ function HomePage() {
               fontWeight="bold"
               gutterBottom
               sx={{
-                fontSize: {
-                  xs: '1.75rem',
-                  sm: '2.5rem',
-                },
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2.5rem' },
+                lineHeight: { xs: 1.2, sm: 1.3 },
+                mb: { xs: 1, sm: 2 },
               }}
             >
               REACH YOUR LIMITS
@@ -620,26 +645,30 @@ function HomePage() {
               fontWeight="bold"
               gutterBottom
               sx={{
-                fontSize: {
-                  xs: '1.75rem',
-                  sm: '2.5rem',
-                },
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2.5rem' },
+                lineHeight: { xs: 1.2, sm: 1.3 },
+                mb: { xs: 1, sm: 2 },
               }}
             >
               AND GET TO THE NEXT LEVEL
             </Typography>
-            <Typography variant="body1" sx={{ mt: 1, mb: 3 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                mt: { xs: 1, sm: 2 },
+                mb: { xs: 2, sm: 3 },
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                px: { xs: 1, sm: 0 },
+              }}
+            >
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </Typography>
             <Stack
-              direction={{
-                xs: 'column',
-                sm: 'row',
-              }}
-              spacing={2}
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={{ xs: 1.5, sm: 2 }}
               justifyContent="center"
-              sx={{ mb: 2 }}
+              sx={{ mb: { xs: 3, sm: 2 } }}
             >
               <Button
                 variant="outlined"
@@ -647,6 +676,9 @@ function HomePage() {
                 sx={{
                   borderColor: 'white',
                   color: 'white',
+                  py: { xs: 1, sm: 1.5 },
+                  px: { xs: 3, sm: 4 },
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
                 }}
               >
                 ABOUT US
@@ -656,6 +688,9 @@ function HomePage() {
                 sx={{
                   backgroundColor: '#FFA76D',
                   color: 'black',
+                  py: { xs: 1, sm: 1.5 },
+                  px: { xs: 3, sm: 4 },
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
                   '&:hover': { backgroundColor: '#ff8c42' },
                 }}
               >
@@ -663,28 +698,37 @@ function HomePage() {
               </Button>
             </Stack>
           </Box>
+
           {/* Social Icons & Scroll Down */}
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="subtitle1" gutterBottom sx={{ mb: 1 }}>
+          <Box sx={{ textAlign: 'center', mt: { xs: 'auto', sm: 0 } }}>
+            <Typography
+              variant="subtitle1"
+              gutterBottom
+              sx={{
+                mb: { xs: 0.5, sm: 1 },
+                fontSize: { xs: '0.75rem', sm: '1rem' },
+                letterSpacing: { xs: 1, sm: 2 },
+              }}
+            >
               SOCIAL
             </Typography>
             <Stack
               direction="row"
-              spacing={2}
+              spacing={{ xs: 1.5, sm: 2 }}
               justifyContent="center"
-              sx={{ mb: 2 }}
+              sx={{ mb: { xs: 1.5, sm: 2 } }}
             >
-              <IconButton color="inherit" size="small">
-                <Facebook />
+              <IconButton color="inherit" size={isMobile ? 'small' : 'medium'}>
+                <Facebook fontSize={isMobile ? 'small' : 'medium'} />
               </IconButton>
-              <IconButton color="inherit" size="small">
-                <Instagram />
+              <IconButton color="inherit" size={isMobile ? 'small' : 'medium'}>
+                <Instagram fontSize={isMobile ? 'small' : 'medium'} />
               </IconButton>
-              <IconButton color="inherit" size="small">
-                <Twitter />
+              <IconButton color="inherit" size={isMobile ? 'small' : 'medium'}>
+                <Twitter fontSize={isMobile ? 'small' : 'medium'} />
               </IconButton>
-              <IconButton color="inherit" size="small">
-                <Email />
+              <IconButton color="inherit" size={isMobile ? 'small' : 'medium'}>
+                <Email fontSize={isMobile ? 'small' : 'medium'} />
               </IconButton>
             </Stack>
             <Box
@@ -692,7 +736,7 @@ function HomePage() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: 1,
+                gap: { xs: 0.5, sm: 1 },
               }}
             >
               <Typography
@@ -700,6 +744,7 @@ function HomePage() {
                 sx={{
                   textTransform: 'uppercase',
                   letterSpacing: 1,
+                  fontSize: { xs: '0.7rem', sm: '0.875rem' },
                 }}
               >
                 SCROLL DOWN
@@ -707,35 +752,24 @@ function HomePage() {
               <KeyboardArrowDown
                 sx={{
                   color: 'white',
-                  fontSize: '2rem',
+                  fontSize: { xs: '1.5rem', sm: '2rem' },
                   animation: 'bounce 2s infinite',
                 }}
               />
-              {/* <Box sx={{ width: '30px', height: '2px', backgroundColor: 'white', transform: 'rotate(45deg)' }} /> */}
             </Box>
           </Box>
         </Box>
       </motion.div>
       {/* FLEX‑VERSE Section */}
-      <Box ref={flexVerseRef} sx={{ height: '250vh', position: 'relative' }}>
+      <Box
+        ref={flexVerseRef}
+        sx={{
+          height: flexVerseSectionHeight,
+          position: 'relative',
+        }}
+      >
         <FlexVerseSection progress={flexVerseProgress} />
       </Box>
-      {/* Add keyframes for bounce animation */}
-      <Box
-        sx={{
-          '@keyframes bounce': {
-            '0%, 20%, 50%, 80%, 100%': {
-              transform: 'translateY(0)',
-            },
-            '40%': {
-              transform: 'translateY(10px)',
-            },
-            '60%': {
-              transform: 'translateY(5px)',
-            },
-          },
-        }}
-      />
       {/* Scroll Section */}
       <Box
         ref={boxRef}
@@ -1026,188 +1060,191 @@ function HomePage() {
         </Box>
       </Box>
       {/* Testimonials Section */}
-      <Container maxWidth="lg" sx={{ my: 8, bgcolor: 'white' }}>
+      <Container
+        maxWidth={false}
+        sx={{
+          px: { xs: 2, sm: 4, md: 6 },
+          py: 8,
+          bgcolor: '#f5f5f5',
+        }}
+      >
         <Typography
           variant="h4"
           fontFamily="Poppins"
           fontWeight="600"
+          textAlign="center"
           sx={{
-            mb: 4,
+            mb: 6,
             position: 'relative',
-            display: 'inline-block',
             '&::after': {
               content: '""',
               position: 'absolute',
-              bottom: -5,
-              left: 0,
-              width: '100%',
-              height: 3,
-              backgroundColor: '#000',
+              bottom: -8,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '80px',
+              height: 4,
+              backgroundColor: '#FF5722',
+              borderRadius: '2px',
             },
           }}
         >
           Testimonials
         </Typography>
-        <Grid container spacing={3}>
-          {testimonials.map((testimonial) => (
-            <Grid item xs={12} sm={6} md={4} key={testimonial.id}>
-              <Paper
-                elevation={2}
-                sx={{
-                  p: 3,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  borderRadius: 2,
-                  bgcolor: '#D9D9D9',
-                  position: 'relative',
-                  pb: 7,
-                }}
-              >
-                <Box>
-                  <Typography
-                    color="orange"
-                    fontFamily="Poppins"
-                    fontSize="20px"
-                    mb={1}
-                  >
-                    Posted on {testimonial.date}
-                  </Typography>
-                  <Typography fontFamily="Poppins" fontSize="18px">
-                    {testimonial.text}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    bottom: 16,
-                    left: 24,
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: '50%',
-                      bgcolor: '#808080',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'white',
-                      fontWeight: 'bold',
-                      position: 'relative',
-                      fontSize: '14px',
-                    }}
-                  >
-                    <Box />#{testimonial.id}
-                  </Box>
-                </Box>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-      {/* FAQ Section */}
-      <Container sx={{ my: 8, bgcolor: 'white', width: 'full' }}>
-        <Box
-          sx={{
-            border: '2px solid black',
-            borderRadius: '24px',
-            p: 4,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            gap: 4,
+
+        <Swiper
+          spaceBetween={30}
+          pagination={{ clickable: true }}
+          modules={[Pagination]}
+          breakpoints={{
+            640: { slidesPerView: 1 },
+            768: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
           }}
         >
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              fontFamily="Poppins"
-              fontWeight="700"
-              fontSize="24px"
-              color="#FF5722"
-              mb={3}
-            >
-              FAQ
-            </Typography>
-            {faqItems.map((item, index) => (
-              <Box
-                key={index}
-                onClick={() => setSelectedFaq(index)}
-                sx={{
-                  p: 2,
-                  mb: 2,
-                  bgcolor: selectedFaq === index ? '#78ABFF' : '#FF9D79',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  border: '2px solid black',
-                }}
-              >
-                <Typography
-                  fontFamily="Poppins"
-                  fontSize="16px"
-                  color={selectedFaq === index ? 'white' : 'black'}
+          {testimonials.map((testimonial, index) => {
+            const isEven = index % 2 === 0;
+            return (
+              <SwiperSlide key={testimonial.id}>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{ height: '100%' }}
                 >
-                  {item.question}
-                </Typography>
-                {selectedFaq === index && (
-                  <Box
+                  <Paper
+                    elevation={3}
                     sx={{
-                      bgcolor: 'white',
-                      borderRadius: '50%',
-                      width: 24,
-                      height: 24,
+                      p: 4,
+                      minHeight: 250,
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      borderRadius: '20px',
+                      bgcolor: isEven ? '#FF9D79' : '#78ABFF',
+                      textAlign: 'center',
+                      color: 'white',
+                      boxShadow: '0px 6px 20px rgba(0,0,0,0.2)',
+                      transition: 'all 0.3s ease',
                     }}
                   >
-                    <PlayArrow sx={{ fontSize: 16, color: '#78ABFF' }} />
-                  </Box>
-                )}
-              </Box>
-            ))}
-          </Box>
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Typography
-              fontFamily="Poppins"
-              fontWeight="700"
-              fontSize="24px"
-              color="#78ABFF"
-              mb={2}
-              alignSelf="center"
-            >
-              ANSWERS
-            </Typography>
-            <Box
-              sx={{
+                    <Typography
+                      fontFamily="Poppins"
+                      fontSize="16px"
+                      mb={2}
+                      sx={{ opacity: 0.9 }}
+                    >
+                      {testimonial.date}
+                    </Typography>
+                    <Typography
+                      fontFamily="Poppins"
+                      fontSize="18px"
+                      fontWeight="500"
+                      mb={3}
+                    >
+                      “{testimonial.text}”
+                    </Typography>
+                    <Box
+                      sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}
+                    >
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          bgcolor: 'white',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: isEven ? '#FF9D79' : '#78ABFF',
+                          fontWeight: 'bold',
+                          fontSize: '16px',
+                          border: `2px solid ${isEven ? '#FF9D79' : '#78ABFF'}`,
+                        }}
+                      >
+                        #{testimonial.id}
+                      </Box>
+                    </Box>
+                  </Paper>
+                </motion.div>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </Container>
+      {/* FAQ Section */}
+      <Container
+        maxWidth={false}
+        sx={{
+          py: 6,
+          px: { xs: 4, sm: 6, md: 12, lg: 16 },
+          bgcolor: '#ffffff',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        }}
+      >
+        <Typography
+          variant="h4"
+          fontFamily="Poppins"
+          fontWeight="600"
+          textAlign="center"
+          sx={{
+            mb: 6,
+            position: 'relative',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -8,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '80px',
+              height: 4,
+              backgroundColor: '#FF5722',
+              borderRadius: '2px',
+            },
+          }}
+        >
+          FAQ's
+        </Typography>
+
+        {faqItems.map((item, index) => (
+          <Accordion
+            key={index}
+            sx={{
+              mb: 2,
+              border: '1px solid #ddd',
+              borderRadius: '12px',
+              '&::before': { display: 'none' },
+              bgcolor: '#FF9D79',
+              color: '#000',
+              boxShadow: 'none',
+              '&.Mui-expanded': {
                 bgcolor: '#78ABFF',
-                borderRadius: '12px',
-                p: 6,
-                flexGrow: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid black',
+                color: '#fff',
+              },
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ color: '#000' }} />}
+              aria-controls={`faq-${index}-content`}
+              id={`faq-${index}-header`}
+              sx={{
+                fontFamily: 'Poppins',
+                fontWeight: '600',
+                fontSize: '18px',
               }}
             >
-              <Typography
-                fontFamily="Poppins"
-                fontSize="18px"
-                color="white"
-                textAlign="center"
-              >
-                {faqItems[selectedFaq].answer}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
+              {item.question}
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{
+                fontFamily: 'Poppins',
+                fontSize: '16px',
+                borderTop: '1px solid rgba(255,255,255,0.3)',
+              }}
+            >
+              {item.answer}
+            </AccordionDetails>
+          </Accordion>
+        ))}
       </Container>
       {/* Footer */}
       <Box
@@ -1219,7 +1256,6 @@ function HomePage() {
           backgroundRepeat: 'no-repeat',
           color: '#fff',
           pt: 6,
-          px: { xs: 3, md: 10 },
           borderTopLeftRadius: '40px',
           borderTopRightRadius: '40px',
           height: '100%',
@@ -1245,18 +1281,25 @@ function HomePage() {
           <Grid
             container
             width="100%"
-            columnSpacing={{ xs: 2, md: 8 }}
+            columnSpacing={{ xs: 2, md: 5 }}
             columns={{ xs: 4, sm: 9, md: 12 }}
+            px={{ xs: 4, md: 0 }}
           >
-            <Grid item xs={12} md={6}>
-              <Grid container>
+            <Grid item xs={12} md={8}>
+              <Grid
+                container
+                sx={{
+                  paddingLeft: { md: 16, lg: 16 },
+                  paddingRight: { md: 6, lg: 24 },
+                }}
+              >
                 {/* Image */}
                 <Grid
                   item
                   xs={12}
                   sm={6}
                   md={6}
-                  width={'350px'}
+                  // width={'350px'}
                   height={'auto'}
                 >
                   <Box
@@ -1343,6 +1386,8 @@ function HomePage() {
               <Box
                 sx={{
                   mt: 3,
+                  paddingLeft: { md: 16, lg: 16 },
+                  paddingRight: { md: 6, lg: 24 },
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' },
                 }}
@@ -1375,7 +1420,7 @@ function HomePage() {
               item
               xs={2}
               sm={6}
-              md={3}
+              md={2}
               sx={{
                 display: 'flex',
                 flexDirection: {
@@ -1385,7 +1430,7 @@ function HomePage() {
                   lg: 'column',
                 },
                 mt: { xs: 3, md: 0 },
-                justifyContent: { xs: 'space-around' },
+                justifyContent: { xs: 'space-between' },
                 gap: { sm: 5 },
               }}
               width="100%"
@@ -1509,7 +1554,15 @@ function HomePage() {
               </Box>
             </Grid>
             {/* Social & Sign-in */}
-            <Grid item xs={2} sm={3} md={3}>
+            <Grid
+              item
+              xs={2}
+              sm={3}
+              md={2}
+              sx={{
+                paddingRight: { md: 3, lg: 5 },
+              }}
+            >
               <Typography
                 sx={{
                   fontFamily: 'Nunito Sans',
@@ -1568,12 +1621,14 @@ function HomePage() {
                 }}
               >
                 <Button
-                  variant="contained"
+                  // variant="contained"
+                  onClick={handleNavigate}
                   sx={{
+                    zIndex: 2,
                     mt: 2,
                     backgroundColor: '#70B1FF',
                     fontFamily: 'Nunito Sans',
-                    fontSize: '25px',
+                    fontSize: { xs: '25px', md: '20px', lg: '25px' },
                     fontWeight: '700',
                     textDecoration: 'underline',
                     color: '#fff',
@@ -1592,7 +1647,8 @@ function HomePage() {
         <Typography
           align="center"
           sx={{
-            mt: 6,
+            fontSize: { xs: '1rem', lg: '2rem' },
+            mt: { xs: 6, lg: 10 },
           }}
         >
           Copyright © 2023 Flex-Verse.com - All Rights Reserved.
@@ -1616,6 +1672,7 @@ function HomePage() {
         ></Box>
         <Box
           sx={{
+            zIndex: 1,
             position: 'absolute',
             bottom: 0,
             right: 0,
@@ -1652,8 +1709,93 @@ function HomePage() {
           }}
         ></Box>
       </Box>
+
+      {/* Add keyframes for bounce animation */}
+      <Box
+        sx={{
+          '@keyframes bounce': {
+            '0%, 20%, 50%, 80%, 100%': {
+              transform: 'translateY(0)',
+            },
+            '40%': {
+              transform: 'translateY(10px)',
+            },
+            '60%': {
+              transform: 'translateY(5px)',
+            },
+          },
+        }}
+      />
     </>
   );
 }
+
+const SequencedScrollReveal = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setStep(1), 1000),
+      setTimeout(() => setStep(2), 2000),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  return (
+    <>
+      {step >= 1 && (
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: 'easeInOut' }}
+        >
+          <Typography
+            variant="subtitle1"
+            sx={{
+              color: 'white',
+              mt: { xs: 1, sm: 2 },
+              fontSize: { xs: '1rem', sm: '1.25rem', md: '1.5rem' },
+              fontWeight: 500,
+              textAlign: 'center',
+              px: 2,
+            }}
+          >
+            Become the best version of yourself
+          </Typography>
+        </motion.div>
+      )}
+      {step >= 2 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: 'easeInOut' }}
+        >
+          <Button
+            variant="outlined"
+            sx={{
+              mt: { xs: 1, sm: 2 },
+              color: 'white',
+              borderColor: 'white',
+              fontWeight: 'bold',
+              px: { xs: 2, sm: 3, md: 4 },
+              py: { xs: 1, sm: 1.5 },
+              borderRadius: '999px',
+              fontSize: { xs: '0.875rem', sm: '1rem', md: '1.2rem' },
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                transform: 'scale(1.05)',
+              },
+            }}
+          >
+            Our Services
+          </Button>
+        </motion.div>
+      )}
+    </>
+  );
+};
 
 export default HomePage;

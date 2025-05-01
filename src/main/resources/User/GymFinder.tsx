@@ -16,6 +16,7 @@ import {
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { ArrowBack, Clear } from '@mui/icons-material';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const gyms = [
   {
@@ -54,6 +55,13 @@ const gyms = [
 
 const GymFinder = () => {
   const [isLoaded, setIsLoaded] = useState(true);
+  const navigate = useNavigate();
+  const handleNavigate = () => {
+    window.scrollTo({
+      top: 0,
+    });
+    navigate('/user');
+  };
   if (!isLoaded)
     return (
       <Container
@@ -66,6 +74,7 @@ const GymFinder = () => {
       >
         <Button
           variant="text"
+          onClick={handleNavigate}
           sx={{
             mb: 2,
             textAlign: 'left',
@@ -164,6 +173,7 @@ const GymFinder = () => {
     >
       <Button
         variant="text"
+        onClick={handleNavigate}
         sx={{
           mb: 2,
           textAlign: 'left',
